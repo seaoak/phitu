@@ -1,0 +1,31 @@
+{
+  "name": "scribblable",
+  "version": "0.0.1",
+  "description": "Realtime Markdown Viewer Engine with Wiki-like internal link based on Isomorphic JavaScript",
+  "main": "index.js",
+  "scripts": {
+    "start": "/bin/true",
+    "test": "/bin/true"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/seaoak/scribblable.git"
+  },
+  "keywords": [
+    "Markdown",
+    "Viewer",
+    "Wiki",
+    "Isomorphic"
+  ],
+  "author": {
+    "name": "Seaoak",
+    "url": "https://seaoak.jp/"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/seaoak/scribblable/issues"
+  },
+  "homepage": "https://github.com/seaoak/scribblable#readme",
+  "dependencies": {},
+  "devDependencies": {}
+}
