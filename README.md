@@ -5,13 +5,12 @@ Realtime Markdown Viewer Engine with Wiki-like internal link based on Isomorphic
 
 ## Features
 
-- Realtime preview (fine-grained automatic refresh without page transition)
-- Isomorphic JavaScript (covers a wide spectrum from "100% client side" to "100% server side", even "Static Site Generator")
-- Available as a Single Page Application (SPA)
-- Available as a Static Site Generator (SSG)
+- Realtime view (*fine-grained* automatic reloading without page transition)
+- Isomorphic JavaScript (spectrum from "100% client side" to "100% server side")
+  * Available as a Single Page Application (SPA)
+  * Available as a Server Side Rendering (SSR)
+  * Available as a Static Site Generator (SSG)
 - Support Wiki-like "BracketName" as internal link
-- AMP ready
-- SEO aware
 - Simple OSS license (MIT)
 - Inspired by [MDwiki](http://www.mdwiki.info)
 
@@ -20,10 +19,11 @@ Realtime Markdown Viewer Engine with Wiki-like internal link based on Isomorphic
 
 ### Major Policy
 
+- Priority:
+  1. Testability (including "non-functional requirements")
+  1. Isomorphic JavaScript
+  1. Speed (first view, navigation response, static file generation, test)
 - Modern Web Standards: ES6 (ECMAScript2015), HTML5 APIs (History, WebWorker, WebSocket)
-- First priority: Testability (including "non-functional requirements")
-- Second priority: Isomorphic JavaScript
-- Third priority: Speed (first view, navigation, static file generation, test)
 - No online editor (you can use your favorite text editor, like "Vim")
 - No version control (you can use your favorite VCS, like "Git")
 - No collaborative working support (you can use file sharing services, like "Dropbox")
@@ -33,7 +33,8 @@ Realtime Markdown Viewer Engine with Wiki-like internal link based on Isomorphic
 
 ### Minor Policy
 
-- Minimize dependency (no jQuery, no Bootstrap)
+- Minimum dependency (no jQuery, no Bootstrap)
+- Free from "single file deployment"
 - No build system (no webpack, no Browserify)
 - No polyfill (no Modernizr, no html5shiv)
 - No transpiler (no Babel, no CofeeScript, no TypeScript)
