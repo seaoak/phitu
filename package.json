@@ -1,5 +1,5 @@
 {
-  "name": "scribblable",
+  "name": "sasicae",
   "version": "0.0.1",
   "description": "Realtime Markdown Viewer Engine with Wiki-like internal link based on Isomorphic JavaScript",
   "main": "index.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/seaoak/scribblable.git"
+    "url": "git+ssh://git@github.com/seaoak/sasicae.git"
   },
   "keywords": [
     "Markdown",
@@ -23,9 +23,9 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/seaoak/scribblable/issues"
+    "url": "https://github.com/seaoak/sasicae/issues"
   },
-  "homepage": "https://github.com/seaoak/scribblable#readme",
+  "homepage": "https://github.com/seaoak/sasicae#readme",
   "dependencies": {},
   "devDependencies": {}
 }
