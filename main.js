@@ -38,10 +38,9 @@
         return args[0];
       },
 
-      debug(...args_raw) {
-        _.assert(args_raw.length > 0);
-        const args = _.saveStackTrace(args_raw, '_.debug():');
-        console.debug.apply(console, args);
+      debug(...args) {
+        _.assert(args.length > 0);
+        console.debug.apply(console, _.saveStackTrace(args, '_.debug():'));
         return args[0];
       },
 
@@ -74,11 +73,11 @@
         return results[0];
       },
 
-      assertEvery(...args_raw) {
-        _.assert(args_raw.length > 0);
-        const pred = args_raw[0];
+      assertEvery(...args) {
+        _.assert(args.length > 0);
+        const pred = args[0];
         _.assert(_.isCallable(pred));
-        const restArgs = _.saveStackTrace(_.slice(1)(args_raw), '_.assertEvery():');
+        const restArgs = _.saveStackTrace(args.slice(1), '_.assertEvery():');
         return function assertEveryHelper(...args) {
           _.assert(args.length === 1);
           const seq = args[0];
@@ -106,7 +105,7 @@
         _.assert(args.length > 0);
         _.assert(args.every(_.isCallable));
         const first = args[0];
-        const funcList = _.slice(1)(args);
+        const funcList = args.slice(1);
         return function pipeHelper(...args) {
           const initialValue = (args.length === 1) ? _.chainOrCall(args[0], first) : first.apply(null, args);
           return funcList.reduce((acc, func) => _.chainOrCall(acc, func), initialValue);
@@ -116,7 +115,7 @@
       tap(...args) {
         const func = args[0];
         _.assert(_.isCallable(func));
-        const restArgs = _.slice(1)(args);
+        const restArgs = args.slice(1);
         const stacktrace = _.saveStackTrace('_.tap():');
         return function tapHelper(...args) {
           _.assert(args.length === 1, args, stacktrace);
@@ -127,9 +126,9 @@
         };
       },
 
-      tapDebug(...args_raw) {
-        const args = [_.debug].concat(_.saveStackTrace(args_raw, '_.tapDebug():'));
-        return _.tap.apply(null, args);
+      tapDebug(...args) {
+        const params = [_.debug].concat(_.saveStackTrace(args, '_.tapDebug():'));
+        return _.tap.apply(null, params);
       },
 
       forEach(...args) {
@@ -202,14 +201,15 @@
         };
       },
 
-      slice(...args0) {
-        _.assert(args0.length < 3);
+      slice(...args) {
+        _.assert(args.length < 3);
+        const restArgs = args.slice();
         const stacktrace = _.saveStackTrace('_.slice():');
         return function sliceHelper(...args) {
           _.assert(args.length === 1, args, stacktrace);
           const seq = args[0];
           _.assert(_.isSeq(seq), args, stacktrace);
-          return Object.freeze(Array.prototype.slice.apply(seq, args0));
+          return Object.freeze(Array.prototype.slice.apply(seq, restArgs));
         };
       },
 
