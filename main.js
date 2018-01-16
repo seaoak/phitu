@@ -27,21 +27,21 @@
       // Followings are platform-dependent
 
       assert() {
-        const args = Array.from(arguments);
+        const args = Object.freeze(Array.from(arguments));
         console.assert(args.length > 0);
         console.assert.apply(console, args);
         return args[0];
       },
 
       error() {
-        const args = Array.from(arguments);
+        const args = Object.freeze(Array.from(arguments));
         _.assert(args.length > 0);
         console.error.apply(console, args);
         return args[0];
       },
 
       debug() {
-        const args_raw = Array.from(arguments);
+        const args_raw = Object.freeze(Array.from(arguments));
         _.assert(args_raw.length > 0);
         const args = _.saveStackTrace(args_raw, '_.debug():');
         console.debug.apply(console, args);
@@ -49,21 +49,21 @@
       },
 
       log() {
-        const args = Array.from(arguments);
+        const args = Object.freeze(Array.from(arguments));
         _.assert(args.length > 0);
         console.log.apply(console, args);
         return args[0];
       },
 
       warn() {
-        const args = Array.from(arguments);
+        const args = Object.freeze(Array.from(arguments));
         _.assert(args.length > 0);
         console.warn.apply(console, args);
         return args[0];
       },
 
       querySelectorAll() {
-        const args = Array.from(arguments);
+        const args = Object.freeze(Array.from(arguments));
         _.assert(args.length === 1);
         const query = args[0];
         return document.querySelectorAll(query);
@@ -73,7 +73,7 @@
       // Followings are platform-independent
 
       querySelector() {
-        const args = Array.from(arguments);
+        const args = Object.freeze(Array.from(arguments));
         _.assert(args.length === 1);
         const query = args[0];
         const results = _.querySelectorAll(query) || [];
@@ -82,13 +82,13 @@
       },
 
       assertEvery() {
-        const args_raw = Array.from(arguments);
+        const args_raw = Object.freeze(Array.from(arguments));
         _.assert(args_raw.length > 0);
         const pred = args_raw[0];
         _.assert(_.isCallable(pred));
-        const restArgs = _.saveStackTrace(args_raw.slice(1), '_.assertEvery():');
+        const restArgs = _.saveStackTrace(_.slice(args_raw, 1), '_.assertEvery():');
         return function assertEveryHelper() {
-          const args = Array.from(arguments);
+          const args = Object.freeze(Array.from(arguments));
           _.assert(args.length === 1);
           const seq = args[0];
           _.assert(_.isSeq(seq));
@@ -101,32 +101,32 @@
         _.assert(_.isSeq(args));
         _.assert(description);
         if (args.length > 0 && args[args.length - 1] instanceof Error) return args;
-        return [].concat(args, new Error(description));
+        return Object.freeze([].concat(args, new Error(description)));
       },
 
       //------------------------------------------------------------------------
       // Followings are PURE functions
 
       pipe() {
-        const args = Array.from(arguments);
+        const args = Object.freeze(Array.from(arguments));
         _.assert(args.length > 0);
         _.assert(args.every(_.isCallable));
         const first = args[0];
-        const funcList = args.slice(1);
+        const funcList = _.slice(args, 1);
         return function pipeHelper() {
-          const args = Array.from(arguments);
+          const args = Object.freeze(Array.from(arguments));
           const initialValue = (args.length === 1) ? _.chainOrCall(args[0], first) : first.apply(null, args);
           return funcList.reduce((acc, func) => _.chainOrCall(acc, func), initialValue);
         };
       },
 
       tap() {
-        const args = Array.from(arguments);
+        const args = Object.freeze(Array.from(arguments));
         const func = args[0];
         _.assert(_.isCallable(func));
-        const restArgs = args.slice(1);
+        const restArgs = _.slice(args, 1);
         return function tapHelper() {
-          const args = Array.from(arguments);
+          const args = Object.freeze(Array.from(arguments));
           _.assert(args.length === 1);
           const seq = args[0];
           _.assert(_.isSeq(seq));
@@ -136,20 +136,20 @@
       },
 
       tapDebug() {
-        const args_raw = Array.from(arguments);
+        const args_raw = Object.freeze(Array.from(arguments));
         const args = [_.debug].concat(_.saveStackTrace(args_raw, '_.tapDebug():'));
         return _.tap.apply(null, args);
       },
 
       forEach() {
-        const args = Array.from(arguments);
+        const args = Object.freeze(Array.from(arguments));
         _.assert(args.length === 1);
-        const func = args.shift();
+        const func = args[0];
         _.assert(_.isCallable(func));
         return function forEachHelper() {
-          const args = Array.from(arguments);
+          const args = Object.freeze(Array.from(arguments));
           _.assert(args.length === 1);
-          const seq = args.shift();
+          const seq = args[0];
           _.assert(_.isSeq(seq));
           Array.prototype.forEach.call(seq, func);
           return seq;
@@ -157,44 +157,44 @@
       },
 
       filter() {
-        const args = Array.from(arguments);
+        const args = Object.freeze(Array.from(arguments));
         _.assert(args.length === 1);
-        const func = args.shift();
+        const func = args[0];
         _.assert(_.isCallable(func));
         return function filterHelper() {
-          const args = Array.from(arguments);
+          const args = Object.freeze(Array.from(arguments));
           _.assert(args.length === 1);
-          const seq = args.shift();
+          const seq = args[0];
           _.assert(_.isSeq(seq));
-          return Array.prototype.filter.call(seq, func);
+          return Object.freeze(Array.prototype.filter.call(seq, func));
         };
       },
 
       map() {
-        const args = Array.from(arguments);
+        const args = Object.freeze(Array.from(arguments));
         _.assert(args.length === 1);
-        const func = args.shift();
+        const func = args[0];
         _.assert(_.isCallable(func));
         return function mapHelper() {
-          const args = Array.from(arguments);
+          const args = Object.freeze(Array.from(arguments));
           _.assert(args.length === 1);
-          const seq = args.shift();
+          const seq = args[0];
           _.assert(_.isSeq(seq));
-          return Array.prototype.map.call(seq, func);
+          return Object.freeze(Array.prototype.map.call(seq, func));
         };
       },
 
       reduce() {
-        const args = Array.from(arguments);
+        const args = Object.freeze(Array.from(arguments));
         _.assert(args.length === 1 || args.length === 2);
         const hasInitialValue = args.length === 2;
-        const func = args.shift();
+        const func = args[0];
         _.assert(_.isCallable(func));
-        const initialValue = args.shift();
+        const initialValue = hasInitialValue && args[1];
         return function reduceHelper() {
-          const args = Array.from(arguments);
+          const args = Object.freeze(Array.from(arguments));
           _.assert(args.length === 1);
-          const seq = args.shift();
+          const seq = args[0];
           _.assert(_.isSeq(seq));
           if (hasInitialValue) return Array.prototype.reduce.call(seq, func, initialValue);
           return Array.prototype.reduce.call(seq, func);
@@ -202,45 +202,52 @@
       },
 
       reduceRight() {
-        const args = Array.from(arguments);
+        const args = Object.freeze(Array.from(arguments));
         _.assert(args.length === 1);
-        const func = args.shift();
+        const func = args[0];
         _.assert(_.isCallable(func));
         return function reduceRightHelper() {
-          const args = Array.from(arguments);
+          const args = Object.freeze(Array.from(arguments));
           _.assert(args.length === 1);
-          const seq = args.shift();
+          const seq = args[0];
           _.assert(_.isSeq(seq));
           return Array.prototype.reduceRight.call(seq, func);
         };
       },
 
-      toSeq() {
-        const args = Array.from(arguments);
+      slice() {
+        const args = Object.freeze(Array.from(arguments));
         _.assert(args.length > 0);
-        if (args.length > 1) return Array.prototype.concat.apply([], args.map(x => _.toSeq(x)));
+        _.assert(_.isSeq(args[0]));
+        return Object.freeze(Array.prototype.slice.apply(args[0], args.slice(1)));
+      },
+
+      toSeq() { // flatten
+        const args = Object.freeze(Array.from(arguments));
+        _.assert(args.length > 0);
+        if (args.length > 1) return Object.freeze(Array.prototype.concat.apply([], args.map(x => _.toSeq(x))));
         if (! _.isSeq(args[0])) return args;
         if (args[0] instanceof Array) return args[0];
-        return Array.from(args[0]);
+        return Object.freeze(Array.from(args[0]));
       },
 
       isSeq() {
-        const args = Array.from(arguments);
-        _.assert(args.length > 0);
-        const arg = args.shift();
+        const args = Object.freeze(Array.from(arguments));
+        _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
+        const arg = args[0];
         return arg && typeof arg.length === 'number' && arg.length >= 0;
       },
 
       isCallable() {
-        const args = Array.from(arguments);
-        _.assert(args.length > 0);
-        const arg = args.shift();
+        const args = Object.freeze(Array.from(arguments));
+        _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
+        const arg = args[0];
         return arg && arg.call && arg.call.call && arg.apply && arg.apply.apply;
       },
 
       identity() {
-        const args = Array.from(arguments);
-        _.assert(args.length > 0);
+        const args = Object.freeze(Array.from(arguments));
+        _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
         return args[0];
       },
 
@@ -271,6 +278,7 @@
       _.tapDebug(),
       _.assertEvery(x => typeof x.e.id === 'string' && x.e.id.length > 0),
       _.reduce((acc, x) => (acc[x.e.id] = x.f(x.e), acc), {}),
+      Object.freeze,
     );
 
     return extract(_.querySelector('nav').childNodes);
