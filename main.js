@@ -347,7 +347,7 @@
 })((_) => {
   'use strict';
 
-  function getConfig() {
+  function generateFormReader() {
     const tableForInputElement = {
       checkbox: e => e.checked,
       radio: e => e.checked ? e.value : undefined,
@@ -358,7 +358,7 @@
       SELECT: e => e.value,
     };
 
-    const extract = _.pipe(
+    return _.pipe(
       _.toSeq,
       _.tapDebug(),
       _.assertEvery(_.identity),
@@ -372,11 +372,9 @@
       _.fromPairs(),
       Object.freeze,
     );
-
-    return extract(_.querySelector('nav').childNodes);
   }
 
-  const config = getConfig();
+  const config = generateFormReader()(_.querySelector('nav').childNodes);
   _.debug(config);
   _.debug(config.GlobalSwitch);
   _.debug('==================================================');
