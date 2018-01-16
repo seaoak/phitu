@@ -363,12 +363,13 @@
       _.tapDebug(),
       _.assertEvery(_.identity),
       _.assertEvery(e => typeof e.nodeName === 'string'),
-      _.map(e => ({e: e, f: table[e.nodeName.toUpperCase()]})),
+      _.map(e => ({e: e, value: _.indirectCall(table, x => x.nodeName.toUpperCase())(e)})),
       _.tapDebug(),
-      _.filter(x => x.f),
+      _.filter(x => x.value !== undefined),
       _.tapDebug(),
       _.assertEvery(x => typeof x.e.id === 'string' && x.e.id.length > 0),
-      _.reduce((acc, x) => (acc[x.e.id] = x.f(x.e), acc), {}),
+      _.map(x => [x.e.id, x.value]),
+      _.fromPairs(),
       Object.freeze,
     );
 
