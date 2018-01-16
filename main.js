@@ -218,7 +218,7 @@
       toSeq() {
         const args = Array.from(arguments);
         _.assert(args.length > 0);
-        if (args.length > 1) return args.map(_.toSeq);
+        if (args.length > 1) return Array.prototype.concat.apply([], args.map(x => _.toSeq(x)));
         if (! _.isSeq(args[0])) return args;
         if (args[0] instanceof Array) return args[0];
         return Array.from(args[0]);
@@ -279,6 +279,10 @@
   const config = getConfig();
   _.debug(config);
   _.debug(config.GlobalSwitch);
+  _.debug('==================================================');
+  _.debug(_.toSeq(1,2,3));
+  _.debug(_.toSeq([1,2,3]));
+  _.debug(_.toSeq([1,2,3], [4,5,6], [7,8,9]));
   _.debug('==================================================');
 
   function sasicaeMain() {
