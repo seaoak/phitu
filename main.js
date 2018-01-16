@@ -341,9 +341,14 @@
   'use strict';
 
   function getConfig() {
+    const tableForInputElement = {
+      checkbox: e => e.checked,
+      radio: e => e.checked ? e.value : undefined,
+    };
+
     const table = {
-      INPUT: (e) => e.checked,
-      SELECT: (e) => e.value,
+      INPUT: _.indirectCall(tableForInputElement, e => e.type.toLowerCase()),
+      SELECT: e => e.value,
     };
 
     const extract = _.pipe(
