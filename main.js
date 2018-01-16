@@ -86,7 +86,7 @@
         _.assert(args_raw.length > 0);
         const pred = args_raw[0];
         _.assert(_.isCallable(pred));
-        const restArgs = _.saveStackTrace(_.slice(args_raw, 1), '_.assertEvery():');
+        const restArgs = _.saveStackTrace(_.slice(1)(args_raw), '_.assertEvery():');
         return function assertEveryHelper() {
           const args = Object.freeze(Array.from(arguments));
           _.assert(args.length === 1);
@@ -112,7 +112,7 @@
         _.assert(args.length > 0);
         _.assert(args.every(_.isCallable));
         const first = args[0];
-        const funcList = _.slice(args, 1);
+        const funcList = _.slice(1)(args);
         return function pipeHelper() {
           const args = Object.freeze(Array.from(arguments));
           const initialValue = (args.length === 1) ? _.chainOrCall(args[0], first) : first.apply(null, args);
@@ -124,7 +124,7 @@
         const args = Object.freeze(Array.from(arguments));
         const func = args[0];
         _.assert(_.isCallable(func));
-        const restArgs = _.slice(args, 1);
+        const restArgs = _.slice(1)(args);
         return function tapHelper() {
           const args = Object.freeze(Array.from(arguments));
           _.assert(args.length === 1);
@@ -216,10 +216,15 @@
       },
 
       slice() {
-        const args = Object.freeze(Array.from(arguments));
-        _.assert(args.length > 0);
-        _.assert(_.isSeq(args[0]));
-        return Object.freeze(Array.prototype.slice.apply(args[0], args.slice(1)));
+        const args0 = Object.freeze(Array.from(arguments));
+        _.assert(args0.length < 3);
+        return function sliceHelper() {
+          const args = Object.freeze(Array.from(arguments));
+          _.assert(args.length === 1);
+          const seq = args[0];
+          _.assert(_.isSeq(seq));
+          return Object.freeze(Array.prototype.slice.apply(seq, args0));
+        };
       },
 
       toSeq() { // flatten
