@@ -247,7 +247,7 @@
         _.assert(args.length > 0);
         if (args.length > 1) return Object.freeze(Array.prototype.concat.apply([], args.map(x => _.toSeq(x))));
         if (! _.isSeq(args[0])) return args;
-        if (args[0] instanceof Array) return args[0];
+        if (Array.isArray(args[0])) return args[0];
         return Object.freeze(Array.from(args[0]));
       },
 
