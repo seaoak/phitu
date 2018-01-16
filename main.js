@@ -91,7 +91,7 @@
           const args = Object.freeze(Array.from(arguments));
           _.assert(args.length === 1);
           const seq = args[0];
-          _.assert(_.isSeq(seq));
+          _.assert(_.isSeq(seq), seq, restArgs);
           _.forEach((e) => _.assert.apply(null, [pred(e), e].concat(restArgs)))(seq);
           return seq;
         };
