@@ -266,22 +266,28 @@
         );
       },
 
-      fromPairs() { // see http://folktale.origamitower.com/api/v2.1.0/en/folktale.core.object.from-pairs.frompairs.html
+      fromPairs() { // curried version of http://folktale.origamitower.com/api/v2.1.0/en/folktale.core.object.from-pairs.frompairs.html
         const args = Object.freeze(Array.from(arguments));
-        _.assertEvery(_.isSeq)(args);
-        _.assertEvery(x => x.length === 2)(args);
-        return _.reduce((acc, x) => Object.defineProperty(acc, x[0], {value: x[1], enumerable: true}), {})(args);
+        _.assert(args.length === 0);
+        const stacktrace = _.saveStackTrace('_.fromPairs():');
+        return _.pipe(
+          _.assertEvery(_.isSeq, stacktrace),
+          _.assertEvery(x => x.length === 2, stacktrace),
+          _.reduce((acc, x) => Object.defineProperty(acc, x[0], {value: x[1], enumerable: true}), {}),
+          Object.freeze,
+        );
       },
 
       seq2obj() {
         const args = Object.freeze(Array.from(arguments));
-        if (args.length === 0) return {};
-        if (args.length === 1) {
-          _.assert(_.isSeq(args[0]));
-          return _.seq2obj.apply(null, args);
-        }
-        _.assert(args.length % 2 === 0);
-        return _.fromPairs(_.chunk(2)(args));
+        _.assert(args.length === 0);
+        const stacktrace = _.saveStackTrace('_.seq2obj():');
+        return _.pipe(
+          _.assert(x => x.length % 2 === 0, stacktrace),
+          _.chunk(2),
+          _.fromPairs,
+          Object.freeze,
+        );
       },
 
       toSeq() { // flatten
