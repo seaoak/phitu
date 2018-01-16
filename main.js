@@ -260,7 +260,10 @@
         const size = (args.length === 0) ? 1 : args[1];
         _.assert(typeof size === 'number');
         _.assert(size > 0);
-        return _.recude((acc, x, i, self) => (i % size === 0) ? [].concat(acc, [_.slice(i, i+size)(self)]) : acc, []);
+        return _.pipe(
+          _.recude((acc, x, i, self) => (i % size === 0) ? [].concat(acc, [_.slice(i, i+size)(self)]) : acc, []),
+          Object.freeze,
+        );
       },
 
       fromPairs() { // see http://folktale.origamitower.com/api/v2.1.0/en/folktale.core.object.from-pairs.frompairs.html
