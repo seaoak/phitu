@@ -195,37 +195,35 @@
 
       reduce() {
         const args = Object.freeze(Array.from(arguments));
-        _.assert(args.length === 1 || args.length === 2);
-        const hasInitialValue = args.length === 2;
-        const func = args[0];
+        return _.reduceWrapper(Array.prototype.reduce, '_.reduce():', args);
+      },
+
+      reduceRight() {
+        const args = Object.freeze(Array.from(arguments));
+        return _.reduceWrapper(Array.prototype.reduceRight, '_.reduceRight():', args);
+      },
+
+      reduceWrapper() {
+        const args = Object.freeze(Array.from(arguments));
+        _.assert(args.length === 3);
+        const operator = args[0];
+        _.assert(_.isCallable(operator));
+        const name = args[1];
+        _.assert(typeof name === 'string');
+        const baseArgs = args[2];
+        _.assert(baseArgs.length === 1 || baseArgs.length === 2);
+        const hasInitialValue = baseArgs.length === 2;
+        const func = baseArgs[0];
         _.assert(_.isCallable(func));
-        const initialValue = hasInitialValue && args[1];
-        const stacktrace = _.saveStackTrace('_.reduce():');
+        const initialValue = hasInitialValue && baseArgs[1];
+        const stacktrace = _.saveStackTrace(name);
         return function reduceHelper() {
           const args = Object.freeze(Array.from(arguments));
           _.assert(args.length === 1, args, stacktrace);
           const seq = args[0];
           _.assert(_.isSeq(seq), args, stacktrace);
-          if (hasInitialValue) return Array.prototype.reduce.call(seq, func, initialValue);
-          return Array.prototype.reduce.call(seq, func);
-        };
-      },
-
-      reduceRight() {
-        const args = Object.freeze(Array.from(arguments));
-        _.assert(args.length === 1 || args.length === 2);
-        const hasInitialValue = args.length === 2;
-        const func = args[0];
-        _.assert(_.isCallable(func));
-        const initialValue = hasInitialValue && args[1];
-        const stacktrace = _.saveStackTrace('_.reduceRight():');
-        return function reduceRightHelper() {
-          const args = Object.freeze(Array.from(arguments));
-          _.assert(args.length === 1, args, stacktrace);
-          const seq = args[0];
-          _.assert(_.isSeq(seq), args, stacktrace);
-          if (hasInitialValue) return Array.prototype.reduceRight.call(seq, func, initialValue);
-          return Array.prototype.reduceRight.call(seq, func);
+          if (hasInitialValue) return operator.call(seq, func, initialValue);
+          return operator.call(seq, func);
         };
       },
 
