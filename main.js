@@ -374,7 +374,7 @@
     );
   }
 
-  const config = generateFormReader()(_.querySelector('nav').childNodes);
+  const config = generateFormReader()(_.querySelector('#GlobalNavigation').childNodes);
   _.debug(config);
   _.debug(config.GlobalSwitch);
   _.debug('==================================================');
