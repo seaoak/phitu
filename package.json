@@ -4,8 +4,9 @@
   "description": "Realtime Markdown Viewer Engine with Wiki-like internal link based on Isomorphic JavaScript",
   "main": "index.js",
   "scripts": {
-    "start": "npm run eslint && /bin/true",
+    "start": "npm run eslint && npm run jshint && /bin/true",
     "eslint": "eslint *.js",
+    "jshint": "jshint *.js",
     "test": "/bin/true"
   },
   "repository": {
@@ -29,6 +30,7 @@
   "homepage": "https://github.com/seaoak/sasicae#readme",
   "dependencies": {},
   "devDependencies": {
-    "eslint": "^4.15.0"
+    "eslint": "^4.15.0",
+    "jshint": "^2.9.5"
   }
 }
