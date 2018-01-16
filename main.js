@@ -26,44 +26,38 @@
       //------------------------------------------------------------------------
       // Followings are platform-dependent
 
-      assert() {
-        const args = Object.freeze(Array.from(arguments));
+      assert(...args) {
         console.assert(args.length > 0);
         console.assert.apply(console, args);
         return args[0];
       },
 
-      error() {
-        const args = Object.freeze(Array.from(arguments));
+      error(...args) {
         _.assert(args.length > 0);
         console.error.apply(console, args);
         return args[0];
       },
 
-      debug() {
-        const args_raw = Object.freeze(Array.from(arguments));
+      debug(...args_raw) {
         _.assert(args_raw.length > 0);
         const args = _.saveStackTrace(args_raw, '_.debug():');
         console.debug.apply(console, args);
         return args[0];
       },
 
-      log() {
-        const args = Object.freeze(Array.from(arguments));
+      log(...args) {
         _.assert(args.length > 0);
         console.log.apply(console, args);
         return args[0];
       },
 
-      warn() {
-        const args = Object.freeze(Array.from(arguments));
+      warn(...args) {
         _.assert(args.length > 0);
         console.warn.apply(console, args);
         return args[0];
       },
 
-      querySelectorAll() {
-        const args = Object.freeze(Array.from(arguments));
+      querySelectorAll(...args) {
         _.assert(args.length === 1);
         const query = args[0];
         return document.querySelectorAll(query);
@@ -72,8 +66,7 @@
       //------------------------------------------------------------------------
       // Followings are platform-independent
 
-      querySelector() {
-        const args = Object.freeze(Array.from(arguments));
+      querySelector(...args) {
         _.assert(args.length === 1);
         const query = args[0];
         const results = _.querySelectorAll(query) || [];
@@ -81,14 +74,12 @@
         return results[0];
       },
 
-      assertEvery() {
-        const args_raw = Object.freeze(Array.from(arguments));
+      assertEvery(...args_raw) {
         _.assert(args_raw.length > 0);
         const pred = args_raw[0];
         _.assert(_.isCallable(pred));
         const restArgs = _.saveStackTrace(_.slice(1)(args_raw), '_.assertEvery():');
-        return function assertEveryHelper() {
-          const args = Object.freeze(Array.from(arguments));
+        return function assertEveryHelper(...args) {
           _.assert(args.length === 1);
           const seq = args[0];
           _.assert(_.isSeq(seq), seq, restArgs);
@@ -97,8 +88,7 @@
         };
       },
 
-      saveStackTrace() {
-        const args = Object.freeze(Array.from(arguments));
+      saveStackTrace(...args) {
         _.assert(args.length < 3);
         if (args.length === 0) return new Error();
         const description = args[args.length - 1];
@@ -112,27 +102,23 @@
       //------------------------------------------------------------------------
       // Followings are PURE functions
 
-      pipe() {
-        const args = Object.freeze(Array.from(arguments));
+      pipe(...args) {
         _.assert(args.length > 0);
         _.assert(args.every(_.isCallable));
         const first = args[0];
         const funcList = _.slice(1)(args);
-        return function pipeHelper() {
-          const args = Object.freeze(Array.from(arguments));
+        return function pipeHelper(...args) {
           const initialValue = (args.length === 1) ? _.chainOrCall(args[0], first) : first.apply(null, args);
           return funcList.reduce((acc, func) => _.chainOrCall(acc, func), initialValue);
         };
       },
 
-      tap() {
-        const args = Object.freeze(Array.from(arguments));
+      tap(...args) {
         const func = args[0];
         _.assert(_.isCallable(func));
         const restArgs = _.slice(1)(args);
         const stacktrace = _.saveStackTrace('_.tap():');
-        return function tapHelper() {
-          const args = Object.freeze(Array.from(arguments));
+        return function tapHelper(...args) {
           _.assert(args.length === 1, args, stacktrace);
           const seq = args[0];
           _.assert(_.isSeq(seq), args, stacktrace);
@@ -141,20 +127,17 @@
         };
       },
 
-      tapDebug() {
-        const args_raw = Object.freeze(Array.from(arguments));
+      tapDebug(...args_raw) {
         const args = [_.debug].concat(_.saveStackTrace(args_raw, '_.tapDebug():'));
         return _.tap.apply(null, args);
       },
 
-      forEach() {
-        const args = Object.freeze(Array.from(arguments));
+      forEach(...args) {
         _.assert(args.length === 1);
         const func = args[0];
         _.assert(_.isCallable(func));
         const stacktrace = _.saveStackTrace('_.forEach():');
-        return function forEachHelper() {
-          const args = Object.freeze(Array.from(arguments));
+        return function forEachHelper(...args) {
           _.assert(args.length === 1, args, stacktrace);
           const seq = args[0];
           _.assert(_.isSeq(seq), args, stacktrace);
@@ -163,14 +146,12 @@
         };
       },
 
-      filter() {
-        const args = Object.freeze(Array.from(arguments));
+      filter(...args) {
         _.assert(args.length === 1);
         const func = args[0];
         _.assert(_.isCallable(func));
         const stacktrace = _.saveStackTrace('_.filter():');
-        return function filterHelper() {
-          const args = Object.freeze(Array.from(arguments));
+        return function filterHelper(...args) {
           _.assert(args.length === 1, args, stacktrace);
           const seq = args[0];
           _.assert(_.isSeq(seq), args, stacktrace);
@@ -178,14 +159,12 @@
         };
       },
 
-      map() {
-        const args = Object.freeze(Array.from(arguments));
+      map(...args) {
         _.assert(args.length === 1);
         const func = args[0];
         _.assert(_.isCallable(func));
         const stacktrace = _.saveStackTrace('_.map():');
-        return function mapHelper() {
-          const args = Object.freeze(Array.from(arguments));
+        return function mapHelper(...args) {
           _.assert(args.length === 1, args, stacktrace);
           const seq = args[0];
           _.assert(_.isSeq(seq), args, stacktrace);
@@ -193,18 +172,15 @@
         };
       },
 
-      reduce() {
-        const args = Object.freeze(Array.from(arguments));
+      reduce(...args) {
         return _.reduceWrapper(Array.prototype.reduce, '_.reduce():', args);
       },
 
-      reduceRight() {
-        const args = Object.freeze(Array.from(arguments));
+      reduceRight(...args) {
         return _.reduceWrapper(Array.prototype.reduceRight, '_.reduceRight():', args);
       },
 
-      reduceWrapper() {
-        const args = Object.freeze(Array.from(arguments));
+      reduceWrapper(...args) {
         _.assert(args.length === 3);
         const operator = args[0];
         _.assert(_.isCallable(operator));
@@ -217,8 +193,7 @@
         _.assert(_.isCallable(func));
         const initialValue = hasInitialValue && baseArgs[1];
         const stacktrace = _.saveStackTrace(name);
-        return function reduceHelper() {
-          const args = Object.freeze(Array.from(arguments));
+        return function reduceHelper(...args) {
           _.assert(args.length === 1, args, stacktrace);
           const seq = args[0];
           _.assert(_.isSeq(seq), args, stacktrace);
@@ -227,12 +202,10 @@
         };
       },
 
-      slice() {
-        const args0 = Object.freeze(Array.from(arguments));
+      slice(...args0) {
         _.assert(args0.length < 3);
         const stacktrace = _.saveStackTrace('_.slice():');
-        return function sliceHelper() {
-          const args = Object.freeze(Array.from(arguments));
+        return function sliceHelper(...args) {
           _.assert(args.length === 1, args, stacktrace);
           const seq = args[0];
           _.assert(_.isSeq(seq), args, stacktrace);
@@ -240,12 +213,10 @@
         };
       },
 
-      last() {
-        const args = Object.freeze(Array.from(arguments));
+      last(...args) {
         _.assert(args.length === 0);
         const stacktrace = _.saveStackTrace('_.last():');
-        return function lastHelper() {
-          const args = Object.freeze(Array.from(arguments));
+        return function lastHelper(...args) {
           _.assert(args.length === 1, args, stacktrace);
           const seq = args[0];
           _.assert(_.isSeq(seq), args, stacktrace);
@@ -254,8 +225,7 @@
         };
       },
 
-      chunk() { // curried version of https://lodash.com/docs/#chunk
-        const args = Object.freeze(Array.from(arguments));
+      chunk(...args) { // curried version of https://lodash.com/docs/#chunk
         _.assert(args.length < 2);
         const size = (args.length === 0) ? 1 : args[1];
         _.assert(typeof size === 'number');
@@ -266,8 +236,7 @@
         );
       },
 
-      fromPairs() { // curried version of http://folktale.origamitower.com/api/v2.1.0/en/folktale.core.object.from-pairs.frompairs.html
-        const args = Object.freeze(Array.from(arguments));
+      fromPairs(...args) { // curried version of http://folktale.origamitower.com/api/v2.1.0/en/folktale.core.object.from-pairs.frompairs.html
         _.assert(args.length === 0);
         const stacktrace = _.saveStackTrace('_.fromPairs():');
         return _.pipe(
@@ -278,8 +247,7 @@
         );
       },
 
-      seq2obj() {
-        const args = Object.freeze(Array.from(arguments));
+      seq2obj(...args) {
         _.assert(args.length === 0);
         const stacktrace = _.saveStackTrace('_.seq2obj():');
         return _.pipe(
@@ -290,8 +258,7 @@
         );
       },
 
-      toSeq() { // flatten
-        const args = Object.freeze(Array.from(arguments));
+      toSeq(...args) { // flatten
         _.assert(args.length > 0);
         if (args.length > 1) return Object.freeze(Array.prototype.concat.apply([], args.map(x => _.toSeq(x))));
         if (! _.isSeq(args[0])) return args;
@@ -299,30 +266,26 @@
         return Object.freeze(Array.from(args[0]));
       },
 
-      isSeq() {
-        const args = Object.freeze(Array.from(arguments));
+      isSeq(...args) {
         _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
         const arg = args[0];
         return arg && typeof arg.length === 'number' && arg.length >= 0;
       },
 
-      isCallable() {
-        const args = Object.freeze(Array.from(arguments));
+      isCallable(...args) {
         _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
         const arg = args[0];
         return arg && arg.call && arg.call.call && arg.apply && arg.apply.apply;
       },
 
-      indirectCall() {
-        const args = Object.freeze(Array.from(arguments));
+      indirectCall(...args) {
         _.assert(0 < args.length && args.length < 3);
         const table = args[0];
         _.assert(table instanceof Object);
         const keygen = (args.length === 1) ? _.identity : args[1];
         _.assert(_.isCallable(keygen));
         const stacktrace = _.saveStackTrace('_.indirectCall():');
-        return function indirectCallHelper() {
-          const args = Object.freeze(Array.from(arguments));
+        return function indirectCallHelper(...args) {
           _.assert(args.length > 0, args, stacktrace);
           const func = table[keygen.apply(null, args)];
           if (func === undefined) return undefined;
@@ -331,8 +294,7 @@
         };
       },
 
-      identity() {
-        const args = Object.freeze(Array.from(arguments));
+      identity(...args) {
         _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
         return args[0];
       },
