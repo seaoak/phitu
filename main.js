@@ -242,7 +242,7 @@
 
       last() {
         const args = Object.freeze(Array.from(arguments));
-        _.assert(args.length === 1);
+        _.assert(args.length === 0);
         const stacktrace = _.saveStackTrace('_.last():');
         return function lastHelper() {
           const args = Object.freeze(Array.from(arguments));
