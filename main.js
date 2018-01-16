@@ -1,10 +1,10 @@
-;(function(func) {
+;(function(window, document, console, sasicae) { // eslint-disable-line no-extra-semi
   'use strict';
 
   const _ = Object.assign(
     {},
-//    folktale.core.lambda,
-//    folktale.fantasyLand,
+    // folktale.core.lambda,
+    // folktale.fantasyLand,
     {
       Maybe: folktale.maybe,
       Result: folktale.result,
@@ -304,9 +304,9 @@
 
   Object.freeze(_);
 
-  window.addEventListener('load', () => func(_));
+  window.addEventListener('load', () => sasicae.call(null, _));
 
-})((_) => {
+})(window, window.document, window.console, (_) => {
   'use strict';
 
   function generateFormReader() {

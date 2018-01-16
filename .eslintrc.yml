@@ -3,6 +3,7 @@ env:
   node: true
 extends: 'eslint:recommended'
 parserOptions:
+  ecmaVersion: 8
   sourceType: module
 rules:
   indent:
@@ -30,4 +31,4 @@ overrides:
     exports: false
     window: false
     global: false
-    URL: false
+    folktale: false
