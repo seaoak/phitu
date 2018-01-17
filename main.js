@@ -215,15 +215,14 @@
         const pos = args[0];
         _.assert(_.isInteger(pos));
         const name = `_.nth(${pos}):`;
+        const func1 = seq => ((seq.length < pos + 1) ? undefined : seq[pos]);
+        const func2 = seq => ((seq.length < -pos) ? undefined : seq[seq.length + pos]);
+        const func = pos >= 0 ? func1 : func2;
         return _.nativeArrayFuncProxy(
           _.applyThis,
           (seq, ret) => ret,
           name,
-          [seq => (seq.length === 0 ? undefined :
-                   seq.length < pos + 1 ? undefined :
-                   seq.length < -pos ? undefined :
-                   pos >= 0 ? seq[pos] :
-                   seq[seq.length + pos])],
+          [func],
         );
       },
 
