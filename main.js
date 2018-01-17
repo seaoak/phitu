@@ -113,22 +113,22 @@
       },
 
       tap(...args) {
-        const func = args[0];
-        _.assert(_.isCallable(func));
-        const restArgs = args.slice(1);
-        const stacktrace = _.saveStackTrace('_.tap():');
-        return function tapHelper(...args) {
-          _.assert(args.length === 1, args, stacktrace);
-          const seq = args[0];
-          _.assert(_.isSeq(seq), args, stacktrace);
-          func.apply(null, [seq].concat(restArgs));
-          return seq;
-        };
+        _.assert(args.length > 0);
+        return _.nativeArrayFuncProxy(
+          _.applyThis,
+          (seq, ret) => seq,
+          '_.tap():',
+          args,
+        );
       },
 
       tapDebug(...args) {
-        const params = [_.debug].concat(_.saveStackTrace(args, '_.tapDebug():'));
-        return _.tap.apply(null, params);
+        return _.nativeArrayFuncProxy(
+          _.applyThis,
+          (seq, ret) => seq,
+          '_.tapDebug():',
+          [_.debug].concat(_.saveStackTrace(args, '_.tapDebug():')),
+        );
       },
 
       forEach(...args) {
@@ -290,6 +290,16 @@
           _.assert(_.isCallable(func), func, args, table, stacktrace);
           return func.apply(null, args);
         };
+      },
+
+      applyThis(...args) {
+        _.assert(args.length > 0);
+        const func = args[0];
+        _.assert(_.isCallable(func));
+        const restArgs = args.slice(1);
+        const that = this;
+        _.assert(that);
+        return func.apply(null, [that].concat(restArgs));
       },
 
       identity(...args) {
