@@ -230,8 +230,7 @@
       chunk(...args) { // curried version of https://lodash.com/docs/#chunk
         _.assert(args.length < 2);
         const size = (args.length === 0) ? 1 : args[1];
-        _.assert(typeof size === 'number');
-        _.assert(size > 0);
+        _.assert(_.isPositiveInteger(size));
         return _.pipe(
           _.recude((acc, x, i, self) => (i % size === 0) ? [].concat(acc, [_.slice(i, i+size)(self)]) : acc, []),
           Object.freeze,
@@ -271,7 +270,7 @@
       isSeq(...args) {
         _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
         const arg = args[0];
-        return arg && typeof arg.length === 'number' && arg.length >= 0;
+        return arg && _.isNonNegativeInteger(arg.length);
       },
 
       isCallable(...args) {
@@ -284,6 +283,18 @@
         _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
         const arg = args[0];
         return Number.isSafeInteger(arg);
+      },
+
+      isPositiveInteger(...args) {
+        _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
+        const arg = args[0];
+        return _.isInteger(arg) && arg > 0;
+      },
+
+      isNonNegativeInteger(...args) {
+        _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
+        const arg = args[0];
+        return _.isInteger(arg) && arg >= 0;
       },
 
       indirectCall(...args) {
