@@ -207,11 +207,23 @@
 
       last(...args) {
         _.assert(args.length === 0);
+        return _.nth(-1);
+      },
+
+      nth(...args) {
+        _.assert(args.length === 1);
+        const pos = args[0];
+        _.assert(_.isInteger(pos));
+        const name = `_.nth(${pos}):`;
         return _.nativeArrayFuncProxy(
           _.applyThis,
           (seq, ret) => ret,
-          '_.last():',
-          [seq => seq.length === 0 ? undefined : seq[seq.length - 1]],
+          name,
+          [seq => (seq.length === 0 ? undefined :
+                   seq.length < pos + 1 ? undefined :
+                   seq.length < -pos ? undefined :
+                   pos >= 0 ? seq[pos] :
+                   seq[seq.length + pos])],
         );
       },
 
@@ -266,6 +278,12 @@
         _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
         const arg = args[0];
         return arg && arg.call && arg.call.call && arg.apply && arg.apply.apply;
+      },
+
+      isInteger(...args) {
+        _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
+        const arg = args[0];
+        return Number.isSafeInteger(arg);
       },
 
       indirectCall(...args) {
