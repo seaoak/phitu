@@ -265,11 +265,12 @@ rules:
   # no-restricted-globals:
   no-shadow:
     # https://eslint.org/docs/rules/no-shadow
+    # NOTE: ['resolve', 'reject', 'done', 'cb'] are not allowed because they suggest nested callback functions (should use Promise instead).
     - error
     -
       builtinGlobals: true
       hoist: 'all'
-      allow: ['resolve', 'reject', 'done', 'cb', 'args', 'params', 'arg', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+      allow: ['args', 'params', 'arg', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
   no-shadow-restricted-names:
     - error
   no-undef:
