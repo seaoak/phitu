@@ -133,84 +133,82 @@
 
       forEach(...args) {
         _.assert(args.length === 1);
-        const func = args[0];
-        _.assert(_.isCallable(func));
-        const stacktrace = _.saveStackTrace('_.forEach():');
-        return function forEachHelper(...args) {
-          _.assert(args.length === 1, args, stacktrace);
-          const seq = args[0];
-          _.assert(_.isSeq(seq), args, stacktrace);
-          Array.prototype.forEach.call(seq, func);
-          return seq;
-        };
+        return _.nativeArrayFuncProxy(
+          Array.prototype.forEach,
+          (seq, ret) => seq,
+          '_.forEach():',
+          args,
+        );
       },
 
       filter(...args) {
         _.assert(args.length === 1);
-        const func = args[0];
-        _.assert(_.isCallable(func));
-        const stacktrace = _.saveStackTrace('_.filter():');
-        return function filterHelper(...args) {
-          _.assert(args.length === 1, args, stacktrace);
-          const seq = args[0];
-          _.assert(_.isSeq(seq), args, stacktrace);
-          return Object.freeze(Array.prototype.filter.call(seq, func));
-        };
+        return _.nativeArrayFuncProxy(
+          Array.prototype.filter,
+          (seq, ret) => Object.freeze(ret),
+          '_.filter():',
+          args,
+        );
       },
 
       map(...args) {
         _.assert(args.length === 1);
-        const func = args[0];
-        _.assert(_.isCallable(func));
-        const stacktrace = _.saveStackTrace('_.map():');
-        return function mapHelper(...args) {
-          _.assert(args.length === 1, args, stacktrace);
-          const seq = args[0];
-          _.assert(_.isSeq(seq), args, stacktrace);
-          return Object.freeze(Array.prototype.map.call(seq, func));
-        };
+        return _.nativeArrayFuncProxy(
+          Array.prototype.map,
+          (seq, ret) => Object.freeze(ret),
+          '_.map():',
+          args,
+        );
       },
 
       reduce(...args) {
-        return _.reduceWrapper(Array.prototype.reduce, '_.reduce():', args);
+        _.assert(args.length === 1 || args.length === 2);
+        return _.nativeArrayFuncProxy(
+          Array.prototype.reduce,
+          (seq, ret) => ret,
+          '_.reduce():',
+          args,
+        );
       },
 
       reduceRight(...args) {
-        return _.reduceWrapper(Array.prototype.reduceRight, '_.reduceRight():', args);
+        _.assert(args.length === 1 || args.length === 2);
+        return _.nativeArrayFuncProxy(
+          Array.prototype.reduceRight,
+          (seq, ret) => ret,
+          '_.reduceRight():',
+          args,
+        );
       },
 
-      reduceWrapper(...args) {
-        _.assert(args.length === 3);
-        const operator = args[0];
-        _.assert(_.isCallable(operator));
-        const name = args[1];
+      nativeArrayFuncProxy(...args) {
+        _.assert(args.length === 4);
+        const nativeFunc = args[0];
+        _.assert(_.isCallable(nativeFunc));
+        const selectResult = args[1];
+        _.assert(_.isCallable(selectResult));
+        const name = args[2];
         _.assert(typeof name === 'string');
-        const baseArgs = args[2];
-        _.assert(baseArgs.length === 1 || baseArgs.length === 2);
-        const hasInitialValue = baseArgs.length === 2;
-        const func = baseArgs[0];
-        _.assert(_.isCallable(func));
-        const initialValue = hasInitialValue && baseArgs[1];
+        const baseArgs = args[3];
+        _.assert(_.isCallable(baseArgs[0]));
         const stacktrace = _.saveStackTrace(name);
-        return function reduceHelper(...args) {
+        return function nativeArrayFuncProxyHelper(...args) {
           _.assert(args.length === 1, args, stacktrace);
           const seq = args[0];
           _.assert(_.isSeq(seq), args, stacktrace);
-          if (hasInitialValue) return operator.call(seq, func, initialValue);
-          return operator.call(seq, func);
+          const ret = nativeFunc.apply(seq, baseArgs);
+          return selectResult.call(null, seq, ret);
         };
       },
 
       slice(...args) {
         _.assert(args.length < 3);
-        const restArgs = args.slice();
-        const stacktrace = _.saveStackTrace('_.slice():');
-        return function sliceHelper(...args) {
-          _.assert(args.length === 1, args, stacktrace);
-          const seq = args[0];
-          _.assert(_.isSeq(seq), args, stacktrace);
-          return Object.freeze(Array.prototype.slice.apply(seq, restArgs));
-        };
+        return _.nativeArrayFuncProxy(
+          Array.prototype.slice,
+          (seq, ret) => Object.freeze(ret),
+          '_.slice():',
+          args,
+        );
       },
 
       last(...args) {
