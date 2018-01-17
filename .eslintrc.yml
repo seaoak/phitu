@@ -278,7 +278,7 @@ rules:
   no-undef-init:
     - error
   no-undefined:
-    # https://eslint.org/docs/rules/no-undefined
+    # NOTE: This rule is incompatible with the rule "no-void" (prefer "undefined" to "void")
     - off
   no-unused-vars:
     # https://eslint.org/docs/rules/no-unused-vars
