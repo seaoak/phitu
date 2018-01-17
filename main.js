@@ -207,14 +207,12 @@
 
       last(...args) {
         _.assert(args.length === 0);
-        const stacktrace = _.saveStackTrace('_.last():');
-        return function lastHelper(...args) {
-          _.assert(args.length === 1, args, stacktrace);
-          const seq = args[0];
-          _.assert(_.isSeq(seq), args, stacktrace);
-          if (seq.length === 0) return undefined;
-          return seq[seq.length - 1];
-        };
+        return _.nativeArrayFuncProxy(
+          _.applyThis,
+          (seq, ret) => ret,
+          '_.last():',
+          [seq => seq.length === 0 ? undefined : seq[seq.length - 1]],
+        );
       },
 
       chunk(...args) { // curried version of https://lodash.com/docs/#chunk
@@ -345,6 +343,10 @@
   _.debug(_.toSeq(1,2,3));
   _.debug(_.toSeq([1,2,3]));
   _.debug(_.toSeq([1,2,3], [4,5,6], [7,8,9]));
+  _.debug('==================================================');
+  _.debug(_.last()(_.toSeq(1,2,3)));
+  _.debug(_.last()(_.toSeq([1])));
+  _.debug(_.last()(_.toSeq([])));
   _.debug('==================================================');
 
   function sasicaeMain() {
