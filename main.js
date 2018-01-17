@@ -368,6 +368,9 @@
   _.debug(config);
   _.debug(config.GlobalSwitch);
   _.debug('==================================================');
+
+  /* eslint-disable no-magic-numbers */
+
   _.debug(_.toSeq(1,2,3));
   _.debug(_.toSeq([1,2,3]));
   _.debug(_.toSeq([1,2,3], [4,5,6], [7,8,9]));
