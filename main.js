@@ -19,7 +19,7 @@
 
       chainOrCall(m, f) {
         _.assert(_.isCallable(f));
-        return _.isMonad(m) ? m.chain(f) : f.call(null, m);
+        return _.isMonad(m) ? m.chain(f) : f(m);
       },
     },
     {
@@ -78,7 +78,7 @@
         const pred = args[0];
         _.assert(_.isCallable(pred));
         const restArgs = _.saveStackTrace(args.slice(1), '_.assertEvery():');
-        return _.forEach((e, i, arr) => _.assert.apply(null, [pred.call(null, e), e, i, arr].concat(restArgs)));
+        return _.forEach((e, i, arr) => _.assert.apply(null, [pred(e), e, i, arr].concat(restArgs)));
       },
 
       saveStackTrace(...args) {
@@ -191,7 +191,7 @@
           const seq = args[0];
           _.assert(_.isSeq(seq), args, stacktrace);
           const ret = nativeFunc.apply(seq, baseArgs);
-          return selectResult.call(null, seq, ret);
+          return selectResult(seq, ret);
         };
       },
 
@@ -332,7 +332,7 @@
 
   Object.freeze(_);
 
-  window.addEventListener('load', () => sasicae.call(null, _));
+  window.addEventListener('load', () => sasicae(_));
 
 })(window, window.document, window.console, (_) => {
   'use strict';
