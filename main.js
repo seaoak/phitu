@@ -110,7 +110,7 @@
         _.assert(args.length > 0);
         return _.nativeArrayFuncProxy(
           _.applyThis,
-          (seq, ret) => seq,
+          (seq, _ret) => seq,
           '_.tap():',
           args,
         );
@@ -119,7 +119,7 @@
       tapDebug(...args) {
         return _.nativeArrayFuncProxy(
           _.applyThis,
-          (seq, ret) => seq,
+          (seq, _ret) => seq,
           '_.tapDebug():',
           [_.debug].concat(_.saveStackTrace(args, '_.tapDebug():')),
         );
@@ -129,7 +129,7 @@
         _.assert(args.length === 1);
         return _.nativeArrayFuncProxy(
           Array.prototype.forEach,
-          (seq, ret) => seq,
+          (seq, _ret) => seq,
           '_.forEach():',
           args,
         );
@@ -139,7 +139,7 @@
         _.assert(args.length === 1);
         return _.nativeArrayFuncProxy(
           Array.prototype.filter,
-          (seq, ret) => Object.freeze(ret),
+          (_seq, ret) => Object.freeze(ret),
           '_.filter():',
           args,
         );
@@ -149,7 +149,7 @@
         _.assert(args.length === 1);
         return _.nativeArrayFuncProxy(
           Array.prototype.map,
-          (seq, ret) => Object.freeze(ret),
+          (_seq, ret) => Object.freeze(ret),
           '_.map():',
           args,
         );
@@ -159,7 +159,7 @@
         _.assert(args.length === 1 || args.length === 2);
         return _.nativeArrayFuncProxy(
           Array.prototype.reduce,
-          (seq, ret) => ret,
+          (_seq, ret) => ret,
           '_.reduce():',
           args,
         );
@@ -169,7 +169,7 @@
         _.assert(args.length === 1 || args.length === 2);
         return _.nativeArrayFuncProxy(
           Array.prototype.reduceRight,
-          (seq, ret) => ret,
+          (_seq, ret) => ret,
           '_.reduceRight():',
           args,
         );
@@ -199,7 +199,7 @@
         _.assert(args.length < 3);
         return _.nativeArrayFuncProxy(
           Array.prototype.slice,
-          (seq, ret) => Object.freeze(ret),
+          (_seq, ret) => Object.freeze(ret),
           '_.slice():',
           args,
         );
@@ -220,7 +220,7 @@
         const func = pos >= 0 ? func1 : func2;
         return _.nativeArrayFuncProxy(
           _.applyThis,
-          (seq, ret) => ret,
+          (_seq, ret) => ret,
           name,
           [func],
         );
@@ -231,7 +231,7 @@
         const size = (args.length === 0) ? 1 : args[1];
         _.assert(_.isPositiveInteger(size));
         return _.pipe(
-          _.recude((acc, x, i, self) => (i % size === 0) ? [].concat(acc, [_.slice(i, i+size)(self)]) : acc, []),
+          _.recude((acc, _x, i, self) => (i % size === 0) ? [].concat(acc, [_.slice(i, i+size)(self)]) : acc, []),
           Object.freeze,
         );
       },
