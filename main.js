@@ -78,13 +78,7 @@
         const pred = args[0];
         _.assert(_.isCallable(pred));
         const restArgs = _.saveStackTrace(args.slice(1), '_.assertEvery():');
-        return function assertEveryHelper(...args) {
-          _.assert(args.length === 1);
-          const seq = args[0];
-          _.assert(_.isSeq(seq), seq, restArgs);
-          _.forEach((e) => _.assert.apply(null, [pred(e), e].concat(restArgs)))(seq);
-          return seq;
-        };
+        return _.forEach((e, i, arr) => _.assert.apply(null, [pred.call(null, e), e, i, arr].concat(restArgs)));
       },
 
       saveStackTrace(...args) {
