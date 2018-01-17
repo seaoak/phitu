@@ -1,4 +1,4 @@
-;(function(window, document, console, sasicae) { // eslint-disable-line no-extra-semi
+;(function(window, document, console, sasicae) { // eslint-disable-line
   'use strict';
 
   const _ = Object.assign(
