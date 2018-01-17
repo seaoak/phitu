@@ -18,6 +18,17 @@ rules:
   semi:
     - error
     - always
+  no-unused-vars:
+    # https://github.com/eslint/eslint/blob/master/docs/rules/no-unused-vars.md
+    - error
+    -
+      vars: 'all'
+      varsIgnorePattern: '^_'
+      args: 'all'
+      ignoreRestSiblings: false
+      argsIgnorePattern: '^_'
+      caughtErrors: 'all'
+      caughtErrorsIgnorePattern: '^_'
 overrides:
   files: ['main.js']
   env:
