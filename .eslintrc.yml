@@ -293,6 +293,34 @@ rules:
       caughtErrorsIgnorePattern: '^_'
   no-use-before-define:
     - error
+  ###=========================================================================
+  ### "Node.js and CommonJS" rules
+  ###=========================================================================
+  callback-return:
+    - error
+    - ['callback', 'cb', 'next', 'done', 'success', 'resolve', 'reject']
+  global-require:
+    - error
+  # handle-callback-err:
+  no-buffer-constructor:
+    - error
+  no-mixed-requires:
+    - error
+    -
+      grouping: true
+      allowCall: true
+  no-new-require:
+    - error
+  no-path-concat:
+    - error
+  no-process-env:
+    # NOTE: If necessary, you should make an exclusive module to get environment variables.
+    - error
+  no-process-exit:
+    - error
+  # no-restricted-modules:
+  no-sync:
+    - error
 overrides:
   files: ['main.js']
   env:
