@@ -6,18 +6,6 @@ parserOptions:
   ecmaVersion: 8
   sourceType: module
 rules:
-  indent:
-    - error
-    - 2
-  linebreak-style:
-    - error
-    - unix
-  quotes:
-    - error
-    - single
-  semi:
-    - error
-    - always
   ###=========================================================================
   ### "Possible Errors" rules
   ###=========================================================================
@@ -320,6 +308,268 @@ rules:
     - error
   # no-restricted-modules:
   no-sync:
+    - error
+  ###=========================================================================
+  ### "Stylistic Issues" rules
+  ###=========================================================================
+  array-bracket-newline:
+    - error
+    - consistent
+  array-bracket-spacing:
+    - error
+    - never
+  array-element-newline:
+    # NOTE: Should be consistent in an array literal.
+    - off
+  block-spacing:
+    - error
+    - always
+  brace-style:
+    - error
+    - 1tbs
+    -
+      allowSingleLine: true
+  camelcase:
+    - error
+  capitalized-comments:
+    - off
+  comma-dangle:
+    - error
+    - always-multiline
+  comma-spacing:
+    - error
+  comma-style:
+    - error
+    - last
+  computed-property-spacing:
+    - error
+    - never
+  consistent-this:
+    - error
+    - that
+  eol-last:
+    - error
+    - always
+  func-call-spacing:
+    - error
+    - never
+  func-name-matching:
+    - off
+  func-names:
+    # NOTE: Use arrow function expression instead of anonymous function
+    - error
+    - always
+  func-style:
+    - error
+    - declaration
+    -
+      allowArrowFunctions: true
+  function-paren-newline:
+    - error
+    - multiline
+  # id-blacklist:
+  # id-length:
+  # id-match:
+  implicit-arrow-linebreak:
+    - error
+    - beside
+  indent:
+    - error
+    - 2
+  jsx-quotes:
+    - error
+    - prefer-double
+  key-spacing:
+    - error
+    -
+      beforeColon: false
+      afterColon: true
+      mode: strict
+  keyword-spacing:
+    - error
+    -
+      before: true
+      after: true
+  line-comment-position:
+    - off
+  linebreak-style:
+    - error
+    - unix
+  lines-around-comment:
+    # NOTE: Use a block comment only if it is independent paragraphs or directives (JSDoc, ESLint, ...).
+    #       So any block comments should not be used in Block/Object/Array/Class literal.
+    - error
+    -
+      beforeBlockComment: true
+      applyDefaultIgnorePatterns: true
+  lines-between-class-members:
+    - error
+    - always
+    -
+      exceptAfterSingleLine: true
+  # max-depth:
+  # max-len:
+  # max-lines:
+  # max-nested-callbacks:
+  # max-params:
+  # max-statements:
+  # max-statements-per-line:
+  # multiline-comment-style:
+  multiline-ternary:
+    - error
+    - always-multiline
+  new-cap:
+    - error
+    -
+      newIsCap: true
+      capIsNew: false
+      properties: true
+  new-parens:
+    - error
+  # newline-per-chained-call:
+  no-array-constructor:
+    - error
+  no-bitwise:
+    - error
+  no-continue:
+    - off
+  no-inline-comments:
+    - off
+  # no-lonely-if:
+  no-mixed-operators:
+    - error
+  no-mixed-spaces-and-tabs:
+    - error
+  no-multi-assign:
+    - error
+  no-multiple-empty-lines:
+    - error
+    -
+      max: 2
+      maxEOF: 0
+      maxBOF: 0
+  no-negated-condition:
+    - error
+  no-nested-ternary:
+    # NOTE: Only the type like "a ? b : c ? d : e" is allowed.  The type "a ? b ? c : d : e" is not allowed.
+    - off
+  no-new-object:
+    - error
+  no-plusplus:
+    - off
+  # no-restricted-syntax:
+  no-tabs:
+    - error
+  no-ternary:
+    - off
+  no-trailing-spaces:
+    - error
+  no-underscore-dangle:
+    # NOTE: An underscore is used to mark an intentionally unused argument (see "no-unused-vars" rule)
+    - off
+  no-unneeded-ternary:
+    - error
+  no-whitespace-before-property:
+    - error
+  nonblock-statement-body-position:
+    - error
+    - beside
+  object-curly-newline:
+    - error
+    -
+      consistent: true
+  object-curly-spacing:
+    - error
+    - never
+    -
+      arraysInObjects: false
+      objectsInObjects: false
+  object-property-newline:
+    - off
+  one-var:
+    - error
+    - never
+  # one-var-declaration-per-line:
+  # operator-assignment:
+  operator-linebreak:
+    - error
+    - before
+  padded-blocks:
+    - off
+  # padding-line-between-statements:
+  quote-props:
+    - error
+    - as-needed
+    -
+      keywords: true
+      numbers: true
+  quotes:
+    - error
+    - single
+    -
+      avoidEscape: true
+      allowTemplateLiterals: false
+  # require-jsdoc:
+  semi:
+    - error
+    - always
+    -
+      omitLastInOneLineBlock: true
+  semi-spacing:
+    - error
+    -
+      before: false
+      after: true
+  semi-style:
+    - error
+    - last
+  sort-keys:
+    - off
+  sort-vars:
+    - off
+  space-before-blocks:
+    - error
+    - always
+  space-before-function-paren:
+    - error
+    -
+      anonymous: never
+      named: never
+      asyncArrow: always
+  space-in-parens:
+    - error
+    - never
+  space-infix-ops:
+    - error
+    -
+      int32Hint: false
+  space-unary-ops:
+    # NOTE: The argument of "yield" should not be wrapped in parentheses, that is, "yield" must be followed by a space.
+    # NOTE: Neigher "!" nor "!!" is enough distinguishable (it is similar to "l" or "I"), so it should be separeted from its argument.
+    - error
+    -
+      words: true
+      nonwords: false
+      overrides:
+        '!': true
+        '!!': true
+  spaced-comment:
+    - error
+    - always
+    -
+      exceptions: ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+', '~', '`', '|', '{', '}', '[', ']', ';', ':', '"', "'", ',', '.', '<', '>', '/', '?']
+  switch-colon-spacing:
+    - error
+    -
+      after: true
+      before: false
+  template-tag-spacing:
+    - error
+    - never
+  unicode-bom:
+    - error
+    - never
+  wrap-regex:
     - error
 overrides:
   files: ['main.js']
