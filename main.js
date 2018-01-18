@@ -12,7 +12,7 @@
       Union: folktale.adt.union,
 
       isMonad(m) {
-        if (_.Result &&_.isCallable(_.Result.hasInstance) && _.Result.hasInstance(m)) return true;
+        if (_.Result && _.isCallable(_.Result.hasInstance) && _.Result.hasInstance(m)) return true;
         if (_.Maybe && _.isCallable(_.Maybe.hasInstance) && _.Maybe.hasInstance(m)) return true;
         return false;
       },
@@ -231,7 +231,7 @@
         const size = (args.length === 0) ? 1 : args[1];
         _.assert(_.isPositiveInteger(size));
         return _.pipe(
-          _.recude((acc, _x, i, self) => (i % size === 0) ? [].concat(acc, [_.slice(i, i+size)(self)]) : acc, []),
+          _.recude((acc, _x, i, self) => (i % size === 0) ? [].concat(acc, [_.slice(i, i + size)(self)]) : acc, []),
           Object.freeze,
         );
       },
