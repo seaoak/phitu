@@ -370,6 +370,7 @@
   _.debug('==================================================');
 
   /* eslint-disable no-magic-numbers */
+  /* eslint-disable comma-spacing */
 
   _.debug(_.toSeq(1,2,3));
   _.debug(_.toSeq([1,2,3]));
