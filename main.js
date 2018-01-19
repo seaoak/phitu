@@ -334,7 +334,7 @@
 
   window.addEventListener('load', () => sasicae(_));
 
-})(window, window.document, window.console, (_) => {
+})(window, window.document, window.console, _ => {
   'use strict';
 
   function generateFormReader() {
@@ -401,7 +401,7 @@
   _.log(ccc);
   _.log(_.Result.hasInstance(ccc));
   _.log(ccc.getOrElse('substitute of ccc'));
-  const ddd = _.pipe(_.identity, (x) => x + x, _.identity)(ccc);
+  const ddd = _.pipe(_.identity, x => x + x, _.identity)(ccc);
   _.log(ddd);
   _.log(_.Result.hasInstance(ddd));
   const eee = ddd.chain(_.identity);
