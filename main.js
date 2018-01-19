@@ -227,7 +227,7 @@
 
       chunk(...args) { // curried version of https://lodash.com/docs/#chunk
         _.assert(args.length < 2);
-        const size = (args.length === 0) ? 1 : args[1];
+        const size = (args.length === 0) ? 1 : args[0];
         _.assert(_.isPositiveInteger(size));
         return _.pipe(
           _.recude((acc, _x, i, self) => (i % size === 0) ? [].concat(acc, [_.slice(i, i + size)(self)]) : acc, []),
