@@ -184,7 +184,6 @@
         const name = args[2];
         _.assert(typeof name === 'string');
         const baseArgs = args[3];
-        _.assert(_.isCallable(baseArgs[0]));
         const stacktrace = _.saveStackTrace(name);
         return function nativeArrayFuncProxyHelper(...args) {
           _.assert(args.length === 1, args, stacktrace);
