@@ -22,6 +22,7 @@ rules:
   no-console:
     - error
   no-constant-condition:
+    # NOTE: Use "for(;;)" as infinite loop (instead of "while(true)")
     - error
   no-control-regex:
     - error
