@@ -28,31 +28,31 @@
 
       assert(...args) {
         console.assert(args.length > 0);
-        console.assert.apply(console, args);
+        console.assert(...args);
         return args[0];
       },
 
       error(...args) {
         _.assert(args.length > 0);
-        console.error.apply(console, args);
+        console.error(...args);
         return args[0];
       },
 
       debug(...args) {
         _.assert(args.length > 0);
-        console.debug.apply(console, _.saveStackTrace(args, '_.debug():'));
+        console.debug(..._.saveStackTrace(args, '_.debug():'));
         return args[0];
       },
 
       log(...args) {
         _.assert(args.length > 0);
-        console.log.apply(console, args);
+        console.log(...args);
         return args[0];
       },
 
       warn(...args) {
         _.assert(args.length > 0);
-        console.warn.apply(console, args);
+        console.warn(...args);
         return args[0];
       },
 
@@ -78,7 +78,7 @@
         const pred = args[0];
         _.assert(_.isCallable(pred));
         const restArgs = _.saveStackTrace(args.slice(1), '_.assertEvery():');
-        return _.forEach((e, i, arr) => _.assert.apply(null, [pred(e), e, i, arr].concat(restArgs)));
+        return _.forEach((e, i, arr) => _.assert(...[pred(e), e, i, arr].concat(restArgs)));
       },
 
       saveStackTrace(...args) {
@@ -101,7 +101,7 @@
         const first = args[0];
         const funcList = args.slice(1);
         return function pipeHelper(...args) {
-          const initialValue = (args.length === 1) ? _.chainOrCall(args[0], first) : first.apply(null, args);
+          const initialValue = (args.length === 1) ? _.chainOrCall(args[0], first) : first(...args);
           return funcList.reduce((acc, func) => _.chainOrCall(acc, func), initialValue);
         };
       },
@@ -260,7 +260,7 @@
 
       toSeq(...args) { // flatten
         _.assert(args.length > 0);
-        if (args.length > 1) return Object.freeze(Array.prototype.concat.apply([], args.map(x => _.toSeq(x))));
+        if (args.length > 1) return Object.freeze([].concat(...args.map(x => _.toSeq(x))));
         if (! _.isSeq(args[0])) return args;
         if (Array.isArray(args[0])) return args[0];
         return Object.freeze(Array.from(args[0]));
@@ -305,10 +305,10 @@
         const stacktrace = _.saveStackTrace('_.indirectCall():');
         return function indirectCallHelper(...args) {
           _.assert(args.length > 0, args, stacktrace);
-          const func = table[keygen.apply(null, args)];
+          const func = table[keygen(...args)];
           if (func === undefined) return undefined;
           _.assert(_.isCallable(func), func, args, table, stacktrace);
-          return func.apply(null, args);
+          return func(...args);
         };
       },
 
@@ -319,7 +319,7 @@
         const restArgs = args.slice(1);
         const that = this;
         _.assert(that);
-        return func.apply(null, [that].concat(restArgs));
+        return func(...[that].concat(restArgs));
       },
 
       identity(...args) {
