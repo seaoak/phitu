@@ -408,7 +408,9 @@ rules:
     -
       exceptAfterSingleLine: true
   # max-depth:
-  # max-len:
+  max-len:
+    # NOTE: Today we use *WIDE* displays. So the width of terminals (=80) is no longer meaningful. A line-break shuold be based on its semantics.
+    - off
   # max-lines:
   # max-nested-callbacks:
   # max-params:
