@@ -250,9 +250,9 @@
         _.assert(args.length === 0);
         const stacktrace = _.saveStackTrace('_.seq2obj():');
         return _.pipe(
-          _.assert(x => x.length % 2 === 0, stacktrace),
+          _.tap(seq => _.assert(seq.length % 2 === 0, stacktrace)),
           _.chunk(2),
-          _.fromPairs,
+          _.fromPairs(),
           Object.freeze,
         );
       },
