@@ -378,6 +378,8 @@
   _.debug(_.last()(_.toSeq([1])));
   _.debug(_.last()(_.toSeq([])));
   _.debug('==================================================');
+  _.debug(_.seq2obj()(['aaa', 1, 'bbb', 2, 'ccc', 3]));
+  _.debug('==================================================');
 
   function sasicaeMain() {
     const replacement = _.querySelector('#Replacement').innerHTML;
