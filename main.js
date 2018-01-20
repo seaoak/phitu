@@ -78,7 +78,7 @@
         const pred = args[0];
         _.assert(_.isCallable(pred));
         const restArgs = _.saveStackTrace(args.slice(1), '_.assertEvery():');
-        return _.forEach((e, i, arr) => _.assert(...[pred(e), e, i, arr].concat(restArgs)));
+        return _.forEach((e, i, arr) => _.assert(pred(e), e, i, arr, ...restArgs));
       },
 
       saveStackTrace(...args) {
@@ -89,7 +89,7 @@
         if (args.length === 1) return err;
         const seq = args[0];
         if (seq.length > 0 && seq[seq.length - 1] instanceof Error) return seq;
-        return Object.freeze([].concat(seq, [err]));
+        return Object.freeze([...seq, err]);
       },
 
       //------------------------------------------------------------------------
@@ -121,7 +121,7 @@
           _.applyThis,
           (seq, _ret) => seq,
           '_.tapDebug():',
-          [_.debug].concat(_.saveStackTrace(args, '_.tapDebug():')),
+          [_.debug, ..._.saveStackTrace(args, '_.tapDebug():')],
         );
       },
 
@@ -230,7 +230,7 @@
         const size = (args.length === 0) ? 1 : args[0];
         _.assert(_.isPositiveInteger(size));
         return _.pipe(
-          _.recude((acc, _x, i, self) => (i % size === 0) ? [].concat(acc, [_.slice(i, i + size)(self)]) : acc, []),
+          _.reduce((acc, _x, i, self) => (i % size === 0) ? [...acc, _.slice(i, i + size)(self)] : acc, []),
           Object.freeze,
         );
       },
@@ -318,7 +318,7 @@
         const restArgs = args.slice(1);
         const that = this;
         _.assert(that);
-        return func(...[that].concat(restArgs));
+        return func(that, ...restArgs);
       },
 
       identity(...args) {
