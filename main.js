@@ -260,9 +260,8 @@
       toSeq(...args) { // flatten
         _.assert(args.length > 0);
         if (args.length > 1) return Object.freeze([].concat(...args.map(x => _.toSeq(x))));
-        if (! _.isSeq(args[0])) return args;
-        if (Array.isArray(args[0])) return args[0];
-        return Object.freeze(Array.from(args[0]));
+        if (! _.isSeq(args[0])) return Object.freeze([args[0]]);
+        return Object.freeze([...args[0]]);
       },
 
       isSeq(...args) {
