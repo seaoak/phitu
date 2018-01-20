@@ -29,7 +29,6 @@
       assert(...args) {
         console.assert(args.length > 0);
         console.assert(...args);
-        return args[0];
       },
 
       error(...args) {
