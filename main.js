@@ -84,9 +84,11 @@
         _.assert(args.length < 3);
         if (args.length === 0) return new Error();
         const description = args[args.length - 1];
+        _.assert(typeof description === 'string');
         const err = new Error(description);
         if (args.length === 1) return err;
         const seq = args[0];
+        _.assert(_.isSeq(seq));
         if (seq.length > 0 && seq[seq.length - 1] instanceof Error) return seq;
         return Object.freeze([...seq, err]);
       },
