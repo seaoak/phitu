@@ -238,7 +238,7 @@
         return _.pipe(
           _.assertEvery(_.isSeq, stacktrace),
           _.assertEvery(x => x.length === 2, stacktrace),
-          _.reduce((acc, x) => Object.defineProperty(acc, x[0], {value: x[1], enumerable: true}), {}),
+          _.reduce((acc, [name, value]) => Object.defineProperty(acc, name, {value: value, enumerable: true}), {}),
           Object.freeze,
         );
       },
