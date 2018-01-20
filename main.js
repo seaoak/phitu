@@ -57,7 +57,7 @@
 
       querySelectorAll(...args) {
         _.assert(args.length === 1);
-        const query = args[0];
+        const [query] = args;
         return document.querySelectorAll(query);
       },
 
@@ -66,7 +66,7 @@
 
       querySelector(...args) {
         _.assert(args.length === 1);
-        const query = args[0];
+        const [query] = args;
         const results = _.querySelectorAll(query) || [];
         if (results.length !== 1) _.warn('querySelector(): failed (length=' + results.length + '): ' + query);
         return results[0];
@@ -74,9 +74,9 @@
 
       assertEvery(...args) {
         _.assert(args.length > 0);
-        const pred = args[0];
+        const [pred, ...rest] = args;
         _.assert(_.isCallable(pred));
-        const restArgs = _.saveStackTrace(args.slice(1), '_.assertEvery():');
+        const restArgs = _.saveStackTrace(rest, '_.assertEvery():');
         return _.forEach((e, i, arr) => _.assert(pred(e), e, i, arr, ...restArgs));
       },
 
@@ -87,7 +87,7 @@
         _.assert(typeof description === 'string');
         const err = new Error(description);
         if (args.length === 1) return err;
-        const seq = args[0];
+        const [seq] = args;
         _.assert(_.isSeq(seq));
         if (seq.length > 0 && seq[seq.length - 1] instanceof Error) return seq;
         return Object.freeze([...seq, err]);
@@ -99,8 +99,7 @@
       pipe(...args) {
         _.assert(args.length > 0);
         _.assert(args.every(_.isCallable));
-        const first = args[0];
-        const funcList = args.slice(1);
+        const [first, ...funcList] = args;
         return function pipeHelper(...args) {
           const initialValue = (args.length === 1) ? _.chainOrCall(args[0], first) : first(...args);
           return funcList.reduce((acc, func) => _.chainOrCall(acc, func), initialValue);
@@ -178,17 +177,14 @@
 
       nativeArrayFuncProxy(...args) {
         _.assert(args.length === 4);
-        const nativeFunc = args[0];
+        const [nativeFunc, selectResult, name, baseArgs] = args;
         _.assert(_.isCallable(nativeFunc));
-        const selectResult = args[1];
         _.assert(_.isCallable(selectResult));
-        const name = args[2];
         _.assert(typeof name === 'string');
-        const baseArgs = args[3];
         const stacktrace = _.saveStackTrace(name);
         return function nativeArrayFuncProxyHelper(...args) {
           _.assert(args.length === 1, args, stacktrace);
-          const seq = args[0];
+          const [seq] = args;
           _.assert(_.isSeq(seq), args, stacktrace);
           const ret = nativeFunc.apply(seq, baseArgs);
           return selectResult(seq, ret);
@@ -212,7 +208,7 @@
 
       nth(...args) {
         _.assert(args.length === 1);
-        const pos = args[0];
+        const [pos] = args;
         _.assert(_.isInteger(pos));
         const name = `_.nth(${pos}):`;
         const func1 = seq => ((seq.length < pos + 1) ? undefined : seq[pos]);
@@ -228,8 +224,8 @@
 
       chunk(...args) { // curried version of https://lodash.com/docs/#chunk
         _.assert(args.length < 2);
-        const size = (args.length === 0) ? 1 : args[0];
-        _.assert(_.isPositiveInteger(size));
+        _.assertEvery(_.isPositiveInteger)(args);
+        const [size = 1] = args;
         return _.pipe(
           _.reduce((acc, _x, i, self) => (i % size === 0) ? [...acc, _.slice(i, i + size)(self)] : acc, []),
           Object.freeze,
@@ -261,45 +257,46 @@
       toSeq(...args) { // flatten
         _.assert(args.length > 0);
         if (args.length > 1) return Object.freeze([].concat(...args.map(x => _.toSeq(x))));
-        if (! _.isSeq(args[0])) return Object.freeze([args[0]]);
-        return Object.freeze([...args[0]]);
+        const [arg] = args;
+        if (! _.isSeq(arg)) return Object.freeze([arg]);
+        return Object.freeze([...arg]);
       },
 
       isSeq(...args) {
         _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
-        const arg = args[0];
+        const [arg] = args;
         return arg && _.isNonNegativeInteger(arg.length);
       },
 
       isCallable(...args) {
         _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
-        const arg = args[0];
+        const [arg] = args;
         return arg && arg.call && arg.call.call && arg.apply && arg.apply.apply;
       },
 
       isInteger(...args) {
         _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
-        const arg = args[0];
+        const [arg] = args;
         return Number.isSafeInteger(arg);
       },
 
       isPositiveInteger(...args) {
         _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
-        const arg = args[0];
+        const [arg] = args;
         return _.isInteger(arg) && arg > 0;
       },
 
       isNonNegativeInteger(...args) {
         _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
-        const arg = args[0];
+        const [arg] = args;
         return _.isInteger(arg) && arg >= 0;
       },
 
       indirectCall(...args) {
         _.assert(0 < args.length && args.length < 3);
-        const table = args[0];
+        _.assertEvery(_.identity)(args);
+        const [table, keygen = _.identity] = args;
         _.assert(table instanceof Object);
-        const keygen = (args.length === 1) ? _.identity : args[1];
         _.assert(_.isCallable(keygen));
         const stacktrace = _.saveStackTrace('_.indirectCall():');
         return function indirectCallHelper(...args) {
@@ -313,9 +310,8 @@
 
       applyThis(...args) {
         _.assert(args.length > 0);
-        const func = args[0];
+        const [func, ...restArgs] = args;
         _.assert(_.isCallable(func));
-        const restArgs = args.slice(1);
         const that = this;
         _.assert(that);
         return func(that, ...restArgs);
