@@ -375,7 +375,11 @@
   _.debug(_.last()(_.toSeq([1])));
   _.debug(_.last()(_.toSeq([])));
   _.debug('==================================================');
-  _.debug(_.seq2obj()(['aaa', 1, 'bbb', 2, 'ccc', 3]));
+  const pairs = Object.freeze(['aaa', 1, 'bbb', 2, 'ccc', 3, 'ddd', 4, 'eee', 5]);
+  _.debug(_.chunk()(pairs));
+  _.debug(_.chunk(2)(pairs));
+  _.debug(_.chunk(3)(pairs));
+  _.debug(_.seq2obj()(pairs));
   _.debug('==================================================');
 
   function sasicaeMain() {
