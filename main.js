@@ -12,7 +12,7 @@
   //         * Prefixes "$" and "$$" are reserved by AngularJS.
   //       - A single alphabet letter is hard to search.
   //       - The letter "S" is initial letter of this software.
-  const SS = Object.assign(
+  const SS = Object.freeze(Object.assign(
     {},
     // folktale.core.lambda,
     // folktale.fantasyLand,
@@ -334,9 +334,7 @@
       },
 
     },
-  );
-
-  Object.freeze(SS);
+  ));
 
   window.addEventListener('load', () => sasicae(SS));
 
