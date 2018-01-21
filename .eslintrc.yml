@@ -282,6 +282,10 @@ rules:
       caughtErrorsIgnorePattern: '^_'
   no-use-before-define:
     - error
+    -
+      functions: false
+      classes: true
+      variables: true
   ###=========================================================================
   ### "Node.js and CommonJS" rules
   ###=========================================================================
