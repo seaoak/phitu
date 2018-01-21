@@ -282,10 +282,6 @@ rules:
       caughtErrorsIgnorePattern: '^_'
   no-use-before-define:
     - error
-    -
-      functions: false
-      classes: true
-      variables: true
   ###=========================================================================
   ### "Node.js and CommonJS" rules
   ###=========================================================================
@@ -578,95 +574,6 @@ rules:
     - never
   wrap-regex:
     - error
-  ###=========================================================================
-  ### "ECMAScript 6" rules
-  ###=========================================================================
-  arrow-body-style:
-    - error
-    - as-needed
-  arrow-parens:
-    # NOTE: The confusion of "=>" with ">=" can be detected by "no-constant-condition" rule.
-    - error
-    - as-needed
-    -
-      requireForBlockBody: false
-  arrow-spacing:
-    - error
-    -
-      before: true
-      after: true
-  constructor-super:
-    - error
-  generator-star-spacing:
-    # NOTE: According to MDN, the star is not an individual symbol, that is, "function*" is a single symbol.
-    #       https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*
-    #       https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/function*
-    # NOTE: Should keep compatibility with "space-before-function-paren" rule.
-    - error
-    -
-      before: false
-      after: true
-      anonymous: neither
-      method: both
-  no-class-assign:
-    - error
-  no-confusing-arrow:
-    # NOTE: Refer to "no-nested-ternary" rule.
-    - off
-  no-const-assign:
-    - error
-  no-dupe-class-members:
-    - error
-  no-duplicate-imports:
-    - error
-    -
-      includeExports: true
-  no-new-symbol:
-    - error
-  # no-restricted-imports:
-  no-this-before-super:
-    - error
-  no-useless-computed-key:
-    # NOTE: For numeric key, basically it itself should not be used, use its string representation "'0': 0" instead of computed key "[0]: 0". Refer to "quote-props" rule.
-    - error
-  no-useless-constructor:
-    - error
-  no-useless-rename:
-    - error
-  no-var:
-    - error
-  object-shorthand:
-    - error
-    - methods
-    -
-      avoidQuotes: true
-      ignoreConstructors: false
-      avoidExplicitReturnArrows: false
-  prefer-arrow-callback:
-    # NOTE: "allowUnboundThis: true" might be open to discussion.
-    - error
-    -
-      allowNamedFunctions: true
-      allowUnboundThis: true
-  prefer-const:
-    - error
-    -
-      destructuring: any
-      ignoreReadBeforeAssign: false
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 overrides:
   files: ['main.js']
   env:
