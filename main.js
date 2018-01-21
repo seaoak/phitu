@@ -1,6 +1,112 @@
 ;(function(window, document, console, sasicae) { // eslint-disable-line
   'use strict';
 
+  // "QQ" is the name space for platform-independent fundamental internal helper functions
+  const QQ = Object.freeze(Object.assign(
+    {},
+    {
+      // predicate
+
+      isInteger(...args) {
+        const [arg] = args;
+        return Number.isSafeInteger(arg);
+      },
+
+      isPositiveInteger(...args) {
+        const [arg] = args;
+        return QQ.isInteger(arg) && arg > 0;
+      },
+
+      isNonNegativeInteger(...args) {
+        const [arg] = args;
+        return QQ.isInteger(arg) && arg >= 0;
+      },
+
+      isCallable(...args) {
+        const [arg] = args;
+        return arg && arg.call && arg.call.call && arg.apply && arg.apply.apply;
+      },
+
+      isIterable(...args) {
+        const [arg] = args;
+        try {
+          return arg && QQ.isNonNegativeInteger(arg.length) && (arg[0], true);
+        } catch (e_) {
+          return false;
+        }
+      },
+    },
+  ));
+
+  // "MM" is the name space for platform-dependent internal helper functions
+  const MM = Object.freeze(Object.assign(
+    {},
+    {
+      // Console API
+
+      assert(...args) {
+        console.assert(args.length > 0);
+        console.assert(...args);
+      },
+
+      error(...args) {
+        MM.assert(args.length > 0);
+        console.error(...args);
+        return args[0];
+      },
+
+      debug(...args) {
+        MM.assert(args.length > 0);
+        console.debug(...MM.saveStackTrace(args, 'SS.debug():'));
+        return args[0];
+      },
+
+      log(...args) {
+        MM.assert(args.length > 0);
+        console.log(...args);
+        return args[0];
+      },
+
+      warn(...args) {
+        MM.assert(args.length > 0);
+        console.warn(...args);
+        return args[0];
+      },
+    },
+    {
+      // DOM API
+
+      querySelectorAll(...args) {
+        MM.assert(args.length === 1);
+        const [query] = args;
+        return document.querySelectorAll(query);
+      },
+    },
+    {
+      // Others
+
+      saveStackTrace(...args) {
+        MM.assert(args.length < 3);
+        if (args.length === 0) return new Error();
+        const description = args[args.length - 1];
+        MM.assert(typeof description === 'string');
+        const err = new Error(description);
+        if (args.length === 1) return err;
+        const [seq] = args;
+        MM.assert(QQ.isIterable(seq));
+        if (seq.length > 0 && seq[seq.length - 1] instanceof Error) return seq;
+        return Object.freeze([...seq, err]);
+      },
+    },
+  ));
+
+  // "HH" is the name space for all internal helper functions
+  const HH = Object.freeze(Object.assign(
+    {},
+    QQ,
+    MM,
+  ));
+
   // NOTE: Use the name space "SS" because of following reasons:
   //       - The underscore ("_") would not be suitable:
   //         * An single underscore ("_") is often used as a placeholder.
@@ -34,43 +140,13 @@
       },
     },
     {
-      //------------------------------------------------------------------------
-      // Followings are platform-dependent
+      assert: HH.assert,
+      error: HH.error,
+      debug: HH.debug,
+      log: HH.log,
+      warn: HH.warn,
 
-      assert(...args) {
-        console.assert(args.length > 0);
-        console.assert(...args);
-      },
-
-      error(...args) {
-        SS.assert(args.length > 0);
-        console.error(...args);
-        return args[0];
-      },
-
-      debug(...args) {
-        SS.assert(args.length > 0);
-        console.debug(...SS.saveStackTrace(args, 'SS.debug():'));
-        return args[0];
-      },
-
-      log(...args) {
-        SS.assert(args.length > 0);
-        console.log(...args);
-        return args[0];
-      },
-
-      warn(...args) {
-        SS.assert(args.length > 0);
-        console.warn(...args);
-        return args[0];
-      },
-
-      querySelectorAll(...args) {
-        SS.assert(args.length === 1);
-        const [query] = args;
-        return document.querySelectorAll(query);
-      },
+      querySelectorAll: HH.querySelectorAll,
 
       //------------------------------------------------------------------------
       // Followings are platform-independent
@@ -87,21 +163,8 @@
         SS.assert(args.length > 0);
         const [pred, ...rest] = args;
         SS.assert(SS.isCallable(pred));
-        const restArgs = SS.saveStackTrace(rest, 'SS.assertEvery():');
+        const restArgs = HH.saveStackTrace(rest, 'SS.assertEvery():');
         return SS.forEach((e, i, arr) => SS.assert(pred(e), e, i, arr, ...restArgs));
-      },
-
-      saveStackTrace(...args) {
-        SS.assert(args.length < 3);
-        if (args.length === 0) return new Error();
-        const description = args[args.length - 1];
-        SS.assert(typeof description === 'string');
-        const err = new Error(description);
-        if (args.length === 1) return err;
-        const [seq] = args;
-        SS.assert(SS.isSeq(seq));
-        if (seq.length > 0 && seq[seq.length - 1] instanceof Error) return seq;
-        return Object.freeze([...seq, err]);
       },
 
       //------------------------------------------------------------------------
@@ -132,7 +195,7 @@
           SS.applyThis,
           (seq, ret_) => seq,
           'SS.tapDebug():',
-          [SS.debug, ...SS.saveStackTrace(args, 'SS.tapDebug():')],
+          [SS.debug, ...HH.saveStackTrace(args, 'SS.tapDebug():')],
         );
       },
 
@@ -192,7 +255,7 @@
         SS.assert(SS.isCallable(nativeFunc));
         SS.assert(SS.isCallable(selectResult));
         SS.assert(typeof name === 'string');
-        const stacktrace = SS.saveStackTrace(name);
+        const stacktrace = HH.saveStackTrace(name);
         return function nativeArrayFuncProxyHelper(...args) {
           SS.assert(args.length === 1, args, stacktrace);
           const [seq] = args;
@@ -245,7 +308,7 @@
 
       fromPairs(...args) { // curried version of http://folktale.origamitower.com/api/v2.1.0/en/folktale.core.object.from-pairs.frompairs.html
         SS.assert(args.length === 0);
-        const stacktrace = SS.saveStackTrace('SS.fromPairs():');
+        const stacktrace = HH.saveStackTrace('SS.fromPairs():');
         return SS.pipe(
           SS.assertEvery(SS.isSeq, stacktrace),
           SS.assertEvery(x => x.length === 2, stacktrace),
@@ -256,7 +319,7 @@
 
       seq2obj(...args) {
         SS.assert(args.length === 0);
-        const stacktrace = SS.saveStackTrace('SS.seq2obj():');
+        const stacktrace = HH.saveStackTrace('SS.seq2obj():');
         return SS.pipe(
           SS.tap(seq => SS.assert(seq.length % 2 === 0, stacktrace)),
           SS.chunk(2),
@@ -273,35 +336,12 @@
         return Object.freeze([...arg]);
       },
 
-      isSeq(...args) {
-        SS.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
-        const [arg] = args;
-        return arg && SS.isNonNegativeInteger(arg.length);
-      },
+      isSeq: HH.isIterable,
 
-      isCallable(...args) {
-        SS.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
-        const [arg] = args;
-        return arg && arg.call && arg.call.call && arg.apply && arg.apply.apply;
-      },
-
-      isInteger(...args) {
-        SS.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
-        const [arg] = args;
-        return Number.isSafeInteger(arg);
-      },
-
-      isPositiveInteger(...args) {
-        SS.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
-        const [arg] = args;
-        return SS.isInteger(arg) && arg > 0;
-      },
-
-      isNonNegativeInteger(...args) {
-        SS.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
-        const [arg] = args;
-        return SS.isInteger(arg) && arg >= 0;
-      },
+      isInteger: HH.isInteger,
+      isPositiveInteger: HH.isPositiveInteger,
+      isNonNegativeInteger: HH.isNonNegativeInteger,
+      isCallable: HH.isCallable,
 
       indirectCall(...args) {
         SS.assert(0 < args.length && args.length < 3);
@@ -309,7 +349,7 @@
         const [table, keygen = SS.identity] = args;
         SS.assert(table instanceof Object);
         SS.assert(SS.isCallable(keygen));
-        const stacktrace = SS.saveStackTrace('SS.indirectCall():');
+        const stacktrace = HH.saveStackTrace('SS.indirectCall():');
         return function indirectCallHelper(...args) {
           SS.assert(args.length > 0, args, stacktrace);
           const func = table[keygen(...args)];
@@ -332,7 +372,6 @@
         SS.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
         return args[0];
       },
-
     },
   ));
 
