@@ -274,12 +274,12 @@ rules:
     - error
     -
       vars: 'all'
-      varsIgnorePattern: '^_'
+      varsIgnorePattern: '_$'
       args: 'all'
       ignoreRestSiblings: false
-      argsIgnorePattern: '^_'
+      argsIgnorePattern: '_$'
       caughtErrors: 'all'
-      caughtErrorsIgnorePattern: '^_'
+      caughtErrorsIgnorePattern: '_$'
   no-use-before-define:
     - error
     -
