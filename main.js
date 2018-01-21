@@ -1,7 +1,18 @@
 ;(function(window, document, console, sasicae) { // eslint-disable-line
   'use strict';
 
-  const _ = Object.assign(
+  // NOTE: Use the name space "SS" because of following reasons:
+  //       - The underscore ("_") would not be suitable:
+  //         * An single underscore ("_") is often used as a placeholder.
+  //         * An identifier which starts with the underscore (e.g., "_foo") is often used as a private identifier.
+  //       - The dollar-sign ("$") would not be suitable:
+  //         * Old versions of ECMAScript specification explicitly say that the dollar sign is intended for use only in mechanically generated code.
+  //         * The single dollar-sign is already used by jQuery.
+  //         * A $-prefixed variable name is often used to show that it holds a jQuery object.
+  //         * Prefixes "$" and "$$" are reserved by AngularJS.
+  //       - A single alphabet letter is hard to search.
+  //       - The letter "S" is initial letter of this software.
+  const SS = Object.assign(
     {},
     // folktale.core.lambda,
     // folktale.fantasyLand,
@@ -12,14 +23,14 @@
       Union: folktale.adt.union,
 
       isMonad(m) {
-        if (_.Result && _.isCallable(_.Result.hasInstance) && _.Result.hasInstance(m)) return true;
-        if (_.Maybe && _.isCallable(_.Maybe.hasInstance) && _.Maybe.hasInstance(m)) return true;
+        if (SS.Result && SS.isCallable(SS.Result.hasInstance) && SS.Result.hasInstance(m)) return true;
+        if (SS.Maybe && SS.isCallable(SS.Maybe.hasInstance) && SS.Maybe.hasInstance(m)) return true;
         return false;
       },
 
       chainOrCall(m, f) {
-        _.assert(_.isCallable(f));
-        return _.isMonad(m) ? m.chain(f) : f(m);
+        SS.assert(SS.isCallable(f));
+        return SS.isMonad(m) ? m.chain(f) : f(m);
       },
     },
     {
@@ -32,31 +43,31 @@
       },
 
       error(...args) {
-        _.assert(args.length > 0);
+        SS.assert(args.length > 0);
         console.error(...args);
         return args[0];
       },
 
       debug(...args) {
-        _.assert(args.length > 0);
-        console.debug(..._.saveStackTrace(args, '_.debug():'));
+        SS.assert(args.length > 0);
+        console.debug(...SS.saveStackTrace(args, 'SS.debug():'));
         return args[0];
       },
 
       log(...args) {
-        _.assert(args.length > 0);
+        SS.assert(args.length > 0);
         console.log(...args);
         return args[0];
       },
 
       warn(...args) {
-        _.assert(args.length > 0);
+        SS.assert(args.length > 0);
         console.warn(...args);
         return args[0];
       },
 
       querySelectorAll(...args) {
-        _.assert(args.length === 1);
+        SS.assert(args.length === 1);
         const [query] = args;
         return document.querySelectorAll(query);
       },
@@ -65,30 +76,30 @@
       // Followings are platform-independent
 
       querySelector(...args) {
-        _.assert(args.length === 1);
+        SS.assert(args.length === 1);
         const [query] = args;
-        const results = _.querySelectorAll(query) || [];
-        if (results.length !== 1) _.warn('querySelector(): failed (length=' + results.length + '): ' + query);
+        const results = SS.querySelectorAll(query) || [];
+        if (results.length !== 1) SS.warn('querySelector(): failed (length=' + results.length + '): ' + query);
         return results[0];
       },
 
       assertEvery(...args) {
-        _.assert(args.length > 0);
+        SS.assert(args.length > 0);
         const [pred, ...rest] = args;
-        _.assert(_.isCallable(pred));
-        const restArgs = _.saveStackTrace(rest, '_.assertEvery():');
-        return _.forEach((e, i, arr) => _.assert(pred(e), e, i, arr, ...restArgs));
+        SS.assert(SS.isCallable(pred));
+        const restArgs = SS.saveStackTrace(rest, 'SS.assertEvery():');
+        return SS.forEach((e, i, arr) => SS.assert(pred(e), e, i, arr, ...restArgs));
       },
 
       saveStackTrace(...args) {
-        _.assert(args.length < 3);
+        SS.assert(args.length < 3);
         if (args.length === 0) return new Error();
         const description = args[args.length - 1];
-        _.assert(typeof description === 'string');
+        SS.assert(typeof description === 'string');
         const err = new Error(description);
         if (args.length === 1) return err;
         const [seq] = args;
-        _.assert(_.isSeq(seq));
+        SS.assert(SS.isSeq(seq));
         if (seq.length > 0 && seq[seq.length - 1] instanceof Error) return seq;
         return Object.freeze([...seq, err]);
       },
@@ -97,125 +108,125 @@
       // Followings are PURE functions
 
       pipe(...args) {
-        _.assert(args.length > 0);
-        _.assert(args.every(_.isCallable));
+        SS.assert(args.length > 0);
+        SS.assert(args.every(SS.isCallable));
         const [first, ...funcList] = args;
         return function pipeHelper(...args) {
-          const initialValue = (args.length === 1) ? _.chainOrCall(args[0], first) : first(...args);
-          return funcList.reduce((acc, func) => _.chainOrCall(acc, func), initialValue);
+          const initialValue = (args.length === 1) ? SS.chainOrCall(args[0], first) : first(...args);
+          return funcList.reduce((acc, func) => SS.chainOrCall(acc, func), initialValue);
         };
       },
 
       tap(...args) {
-        _.assert(args.length > 0);
-        return _.nativeArrayFuncProxy(
-          _.applyThis,
+        SS.assert(args.length > 0);
+        return SS.nativeArrayFuncProxy(
+          SS.applyThis,
           (seq, ret_) => seq,
-          '_.tap():',
+          'SS.tap():',
           args,
         );
       },
 
       tapDebug(...args) {
-        return _.nativeArrayFuncProxy(
-          _.applyThis,
+        return SS.nativeArrayFuncProxy(
+          SS.applyThis,
           (seq, ret_) => seq,
-          '_.tapDebug():',
-          [_.debug, ..._.saveStackTrace(args, '_.tapDebug():')],
+          'SS.tapDebug():',
+          [SS.debug, ...SS.saveStackTrace(args, 'SS.tapDebug():')],
         );
       },
 
       forEach(...args) {
-        _.assert(args.length === 1);
-        return _.nativeArrayFuncProxy(
+        SS.assert(args.length === 1);
+        return SS.nativeArrayFuncProxy(
           Array.prototype.forEach,
           (seq, ret_) => seq,
-          '_.forEach():',
+          'SS.forEach():',
           args,
         );
       },
 
       filter(...args) {
-        _.assert(args.length === 1);
-        return _.nativeArrayFuncProxy(
+        SS.assert(args.length === 1);
+        return SS.nativeArrayFuncProxy(
           Array.prototype.filter,
           (seq_, ret) => Object.freeze(ret),
-          '_.filter():',
+          'SS.filter():',
           args,
         );
       },
 
       map(...args) {
-        _.assert(args.length === 1);
-        return _.nativeArrayFuncProxy(
+        SS.assert(args.length === 1);
+        return SS.nativeArrayFuncProxy(
           Array.prototype.map,
           (seq_, ret) => Object.freeze(ret),
-          '_.map():',
+          'SS.map():',
           args,
         );
       },
 
       reduce(...args) {
-        _.assert(args.length === 1 || args.length === 2);
-        return _.nativeArrayFuncProxy(
+        SS.assert(args.length === 1 || args.length === 2);
+        return SS.nativeArrayFuncProxy(
           Array.prototype.reduce,
           (seq_, ret) => ret,
-          '_.reduce():',
+          'SS.reduce():',
           args,
         );
       },
 
       reduceRight(...args) {
-        _.assert(args.length === 1 || args.length === 2);
-        return _.nativeArrayFuncProxy(
+        SS.assert(args.length === 1 || args.length === 2);
+        return SS.nativeArrayFuncProxy(
           Array.prototype.reduceRight,
           (seq_, ret) => ret,
-          '_.reduceRight():',
+          'SS.reduceRight():',
           args,
         );
       },
 
       nativeArrayFuncProxy(...args) {
-        _.assert(args.length === 4);
+        SS.assert(args.length === 4);
         const [nativeFunc, selectResult, name, baseArgs] = args;
-        _.assert(_.isCallable(nativeFunc));
-        _.assert(_.isCallable(selectResult));
-        _.assert(typeof name === 'string');
-        const stacktrace = _.saveStackTrace(name);
+        SS.assert(SS.isCallable(nativeFunc));
+        SS.assert(SS.isCallable(selectResult));
+        SS.assert(typeof name === 'string');
+        const stacktrace = SS.saveStackTrace(name);
         return function nativeArrayFuncProxyHelper(...args) {
-          _.assert(args.length === 1, args, stacktrace);
+          SS.assert(args.length === 1, args, stacktrace);
           const [seq] = args;
-          _.assert(_.isSeq(seq), args, stacktrace);
+          SS.assert(SS.isSeq(seq), args, stacktrace);
           const ret = nativeFunc.apply(seq, baseArgs);
           return selectResult(seq, ret);
         };
       },
 
       slice(...args) {
-        _.assert(args.length < 3);
-        return _.nativeArrayFuncProxy(
+        SS.assert(args.length < 3);
+        return SS.nativeArrayFuncProxy(
           Array.prototype.slice,
           (seq_, ret) => Object.freeze(ret),
-          '_.slice():',
+          'SS.slice():',
           args,
         );
       },
 
       last(...args) {
-        _.assert(args.length === 0);
-        return _.nth(-1);
+        SS.assert(args.length === 0);
+        return SS.nth(-1);
       },
 
       nth(...args) {
-        _.assert(args.length === 1);
+        SS.assert(args.length === 1);
         const [pos] = args;
-        _.assert(_.isInteger(pos));
-        const name = `_.nth(${pos}):`;
+        SS.assert(SS.isInteger(pos));
+        const name = `SS.nth(${pos}):`;
         const func1 = seq => ((seq.length < pos + 1) ? undefined : seq[pos]);
         const func2 = seq => ((seq.length < -pos) ? undefined : seq[seq.length + pos]);
         const func = pos >= 0 ? func1 : func2;
-        return _.nativeArrayFuncProxy(
-          _.applyThis,
+        return SS.nativeArrayFuncProxy(
+          SS.applyThis,
           (seq_, ret) => ret,
           name,
           [func],
@@ -223,113 +234,113 @@
       },
 
       chunk(...args) { // curried version of https://lodash.com/docs/#chunk
-        _.assert(args.length < 2);
-        _.assertEvery(_.isPositiveInteger)(args);
+        SS.assert(args.length < 2);
+        SS.assertEvery(SS.isPositiveInteger)(args);
         const [size = 1] = args;
-        return _.pipe(
-          _.reduce((acc, x_, i, self) => (i % size === 0) ? [...acc, _.slice(i, i + size)(self)] : acc, []),
+        return SS.pipe(
+          SS.reduce((acc, x_, i, self) => (i % size === 0) ? [...acc, SS.slice(i, i + size)(self)] : acc, []),
           Object.freeze,
         );
       },
 
       fromPairs(...args) { // curried version of http://folktale.origamitower.com/api/v2.1.0/en/folktale.core.object.from-pairs.frompairs.html
-        _.assert(args.length === 0);
-        const stacktrace = _.saveStackTrace('_.fromPairs():');
-        return _.pipe(
-          _.assertEvery(_.isSeq, stacktrace),
-          _.assertEvery(x => x.length === 2, stacktrace),
-          _.reduce((acc, [name, value]) => Object.defineProperty(acc, name, {value: value, enumerable: true}), {}),
+        SS.assert(args.length === 0);
+        const stacktrace = SS.saveStackTrace('SS.fromPairs():');
+        return SS.pipe(
+          SS.assertEvery(SS.isSeq, stacktrace),
+          SS.assertEvery(x => x.length === 2, stacktrace),
+          SS.reduce((acc, [name, value]) => Object.defineProperty(acc, name, {value: value, enumerable: true}), {}),
           Object.freeze,
         );
       },
 
       seq2obj(...args) {
-        _.assert(args.length === 0);
-        const stacktrace = _.saveStackTrace('_.seq2obj():');
-        return _.pipe(
-          _.tap(seq => _.assert(seq.length % 2 === 0, stacktrace)),
-          _.chunk(2),
-          _.fromPairs(),
+        SS.assert(args.length === 0);
+        const stacktrace = SS.saveStackTrace('SS.seq2obj():');
+        return SS.pipe(
+          SS.tap(seq => SS.assert(seq.length % 2 === 0, stacktrace)),
+          SS.chunk(2),
+          SS.fromPairs(),
           Object.freeze,
         );
       },
 
       toSeq(...args) { // flatten
-        _.assert(args.length > 0);
-        if (args.length > 1) return Object.freeze([].concat(...args.map(x => _.toSeq(x))));
+        SS.assert(args.length > 0);
+        if (args.length > 1) return Object.freeze([].concat(...args.map(x => SS.toSeq(x))));
         const [arg] = args;
-        if (! _.isSeq(arg)) return Object.freeze([arg]);
+        if (! SS.isSeq(arg)) return Object.freeze([arg]);
         return Object.freeze([...arg]);
       },
 
       isSeq(...args) {
-        _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
+        SS.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
         const [arg] = args;
-        return arg && _.isNonNegativeInteger(arg.length);
+        return arg && SS.isNonNegativeInteger(arg.length);
       },
 
       isCallable(...args) {
-        _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
+        SS.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
         const [arg] = args;
         return arg && arg.call && arg.call.call && arg.apply && arg.apply.apply;
       },
 
       isInteger(...args) {
-        _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
+        SS.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
         const [arg] = args;
         return Number.isSafeInteger(arg);
       },
 
       isPositiveInteger(...args) {
-        _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
+        SS.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
         const [arg] = args;
-        return _.isInteger(arg) && arg > 0;
+        return SS.isInteger(arg) && arg > 0;
       },
 
       isNonNegativeInteger(...args) {
-        _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
+        SS.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
         const [arg] = args;
-        return _.isInteger(arg) && arg >= 0;
+        return SS.isInteger(arg) && arg >= 0;
       },
 
       indirectCall(...args) {
-        _.assert(0 < args.length && args.length < 3);
-        _.assertEvery(_.identity)(args);
-        const [table, keygen = _.identity] = args;
-        _.assert(table instanceof Object);
-        _.assert(_.isCallable(keygen));
-        const stacktrace = _.saveStackTrace('_.indirectCall():');
+        SS.assert(0 < args.length && args.length < 3);
+        SS.assertEvery(SS.identity)(args);
+        const [table, keygen = SS.identity] = args;
+        SS.assert(table instanceof Object);
+        SS.assert(SS.isCallable(keygen));
+        const stacktrace = SS.saveStackTrace('SS.indirectCall():');
         return function indirectCallHelper(...args) {
-          _.assert(args.length > 0, args, stacktrace);
+          SS.assert(args.length > 0, args, stacktrace);
           const func = table[keygen(...args)];
           if (func === undefined) return undefined;
-          _.assert(_.isCallable(func), func, args, table, stacktrace);
+          SS.assert(SS.isCallable(func), func, args, table, stacktrace);
           return func(...args);
         };
       },
 
       applyThis(...args) {
-        _.assert(args.length > 0);
+        SS.assert(args.length > 0);
         const [func, ...restArgs] = args;
-        _.assert(_.isCallable(func));
+        SS.assert(SS.isCallable(func));
         const that = this;
-        _.assert(that);
+        SS.assert(that);
         return func(that, ...restArgs);
       },
 
       identity(...args) {
-        _.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
+        SS.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
         return args[0];
       },
 
     },
   );
 
-  Object.freeze(_);
+  Object.freeze(SS);
 
-  window.addEventListener('load', () => sasicae(_));
+  window.addEventListener('load', () => sasicae(SS));
 
-})(window, window.document, window.console, _ => {
+})(window, window.document, window.console, SS => {
   'use strict';
 
   function generateFormReader() {
@@ -339,52 +350,52 @@
     };
 
     const table = {
-      INPUT: _.indirectCall(tableForInputElement, e => e.type.toLowerCase()),
+      INPUT: SS.indirectCall(tableForInputElement, e => e.type.toLowerCase()),
       SELECT: e => e.value,
     };
 
-    return _.pipe(
-      _.toSeq,
-      _.tapDebug(),
-      _.assertEvery(_.identity),
-      _.assertEvery(e => typeof e.nodeName === 'string'),
-      _.map(e => ({e: e, value: _.indirectCall(table, x => x.nodeName.toUpperCase())(e)})),
-      _.tapDebug(),
-      _.filter(x => x.value !== undefined),
-      _.tapDebug(),
-      _.assertEvery(x => typeof x.e.id === 'string' && x.e.id.length > 0),
-      _.map(x => [x.e.id, x.value]),
-      _.fromPairs(),
+    return SS.pipe(
+      SS.toSeq,
+      SS.tapDebug(),
+      SS.assertEvery(SS.identity),
+      SS.assertEvery(e => typeof e.nodeName === 'string'),
+      SS.map(e => ({e: e, value: SS.indirectCall(table, x => x.nodeName.toUpperCase())(e)})),
+      SS.tapDebug(),
+      SS.filter(x => x.value !== undefined),
+      SS.tapDebug(),
+      SS.assertEvery(x => typeof x.e.id === 'string' && x.e.id.length > 0),
+      SS.map(x => [x.e.id, x.value]),
+      SS.fromPairs(),
       Object.freeze,
     );
   }
 
-  const config = generateFormReader()(_.querySelector('#GlobalNavigation').childNodes);
-  _.debug(config);
-  _.debug(config.GlobalSwitch);
-  _.debug('==================================================');
+  const config = generateFormReader()(SS.querySelector('#GlobalNavigation').childNodes);
+  SS.debug(config);
+  SS.debug(config.GlobalSwitch);
+  SS.debug('==================================================');
 
   /* eslint-disable no-magic-numbers */
   /* eslint-disable comma-spacing */
 
-  _.debug(_.toSeq(1,2,3));
-  _.debug(_.toSeq([1,2,3]));
-  _.debug(_.toSeq([1,2,3], [4,5,6], [7,8,9]));
-  _.debug('==================================================');
-  _.debug(_.last()(_.toSeq(1,2,3)));
-  _.debug(_.last()(_.toSeq([1])));
-  _.debug(_.last()(_.toSeq([])));
-  _.debug('==================================================');
+  SS.debug(SS.toSeq(1,2,3));
+  SS.debug(SS.toSeq([1,2,3]));
+  SS.debug(SS.toSeq([1,2,3], [4,5,6], [7,8,9]));
+  SS.debug('==================================================');
+  SS.debug(SS.last()(SS.toSeq(1,2,3)));
+  SS.debug(SS.last()(SS.toSeq([1])));
+  SS.debug(SS.last()(SS.toSeq([])));
+  SS.debug('==================================================');
   const pairs = Object.freeze(['aaa', 1, 'bbb', 2, 'ccc', 3, 'ddd', 4, 'eee', 5]);
-  _.debug(_.chunk()(pairs));
-  _.debug(_.chunk(2)(pairs));
-  _.debug(_.chunk(3)(pairs));
-  _.debug(_.seq2obj()(pairs));
-  _.debug('==================================================');
+  SS.debug(SS.chunk()(pairs));
+  SS.debug(SS.chunk(2)(pairs));
+  SS.debug(SS.chunk(3)(pairs));
+  SS.debug(SS.seq2obj()(pairs));
+  SS.debug('==================================================');
 
   function sasicaeMain() {
-    const replacement = _.querySelector('#Replacement').innerHTML;
-    const target = _.querySelector('#TargetParagraph');
+    const replacement = SS.querySelector('#Replacement').innerHTML;
+    const target = SS.querySelector('#TargetParagraph');
     const original = target.innerHTML;
     let isReplaced = false;
     setInterval(() => {
@@ -394,18 +405,18 @@
 
   sasicaeMain();
 
-  const bbb = _.Result.Ok('bbb');
-  _.log(bbb);
-  _.log(_.Result.hasInstance(bbb));
-  _.log(bbb.getOrElse('substitute of bbb'));
-  const ccc = _.Result.Error(new Error('ccc'));
-  _.log(ccc);
-  _.log(_.Result.hasInstance(ccc));
-  _.log(ccc.getOrElse('substitute of ccc'));
-  const ddd = _.pipe(_.identity, x => x + x, _.identity)(ccc);
-  _.log(ddd);
-  _.log(_.Result.hasInstance(ddd));
-  const eee = ddd.chain(_.identity);
-  _.log(eee);
-  _.log(eee.getOrElse('error detected'));
+  const bbb = SS.Result.Ok('bbb');
+  SS.log(bbb);
+  SS.log(SS.Result.hasInstance(bbb));
+  SS.log(bbb.getOrElse('substitute of bbb'));
+  const ccc = SS.Result.Error(new Error('ccc'));
+  SS.log(ccc);
+  SS.log(SS.Result.hasInstance(ccc));
+  SS.log(ccc.getOrElse('substitute of ccc'));
+  const ddd = SS.pipe(SS.identity, x => x + x, SS.identity)(ccc);
+  SS.log(ddd);
+  SS.log(SS.Result.hasInstance(ddd));
+  const eee = ddd.chain(SS.identity);
+  SS.log(eee);
+  SS.log(eee.getOrElse('error detected'));
 });
