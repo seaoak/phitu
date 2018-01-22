@@ -1,4 +1,4 @@
-;(function(window, document, console, sasicae) { // eslint-disable-line
+;Promise.resolve().then(() => { // eslint-disable-line no-extra-semi
   'use strict';
 
   // "QQ" is the name space for platform-independent fundamental internal helper functions
@@ -37,6 +37,15 @@
       },
     },
   ));
+
+  return Promise.resolve(QQ); // explicitly create a new Promise object because the argument may have "then()" method
+
+}).then(QQ => {
+  'use strict';
+
+  const {document} = window; // eslint-disable-line no-undef
+  const {console} = window; // eslint-disable-line no-undef
+  const onload = handler => window.addEventListener('load', () => handler()); // eslint-disable-line no-undef
 
   // "MM" is the name space for platform-dependent internal helper functions
   const MM = Object.freeze(Object.assign(
@@ -97,6 +106,12 @@
         if (seq.length > 0 && seq[seq.length - 1] instanceof Error) return seq;
         return Object.freeze([...seq, err]);
       },
+
+      getPromiseForOnLoad(...args) {
+        MM.assert(args.length === 1);
+        const [arg] = args;
+        return new Promise(resolve => onload(() => resolve(arg)));
+      },
     },
   ));
 
@@ -106,6 +121,11 @@
     QQ,
     MM,
   ));
+
+  return Promise.resolve(HH); // explicitly create a new Promise object because the argument may have "then()" method
+
+}).then(HH => {
+  'use strict';
 
   // NOTE: Use the name space "SS" because of following reasons:
   //       - The underscore ("_") would not be suitable:
@@ -147,6 +167,8 @@
       warn: HH.warn,
 
       querySelectorAll: HH.querySelectorAll,
+
+      getPromiseForOnLoad: HH.getPromiseForOnLoad,
 
       //------------------------------------------------------------------------
       // Followings are platform-independent
@@ -375,9 +397,14 @@
     },
   ));
 
-  window.addEventListener('load', () => sasicae(SS));
+  return Promise.resolve(SS); // explicitly create a new Promise object because the argument may have "then()" method
 
-})(window, window.document, window.console, SS => {
+}).then(SS => {
+  'use strict';
+
+  return SS.getPromiseForOnLoad(SS);
+
+}).then(SS => {
   'use strict';
 
   function generateFormReader() {
