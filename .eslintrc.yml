@@ -1,6 +1,5 @@
 env:
   es6: true
-  node: true
 extends: 'eslint:recommended'
 parserOptions:
   ecmaVersion: 8
@@ -679,7 +678,7 @@ rules:
     - error
     - after
 overrides:
-  files: ['main.js']
+  files: ['aaa.js']
   env:
     node: false
     shared-node-browser: true
