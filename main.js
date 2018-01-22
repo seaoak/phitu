@@ -38,6 +38,7 @@
     },
   ));
 
+  console.debug('==========END_OF_QQ=========='); // eslint-disable-line
   return Promise.resolve(QQ); // explicitly create a new Promise object because the argument may have "then()" method
 
 }).then(QQ => {
@@ -122,6 +123,7 @@
     MM,
   ));
 
+  console.debug('==========END_OF_HH=========='); // eslint-disable-line
   return Promise.resolve(HH); // explicitly create a new Promise object because the argument may have "then()" method
 
 }).then(HH => {
@@ -397,6 +399,7 @@
     },
   ));
 
+  console.debug('==========END_OF_SS=========='); // eslint-disable-line
   return Promise.resolve(SS); // explicitly create a new Promise object because the argument may have "then()" method
 
 }).then(SS => {
@@ -406,6 +409,8 @@
 
 }).then(SS => {
   'use strict';
+
+  console.debug('==========START_OF_MAIN=========='); // eslint-disable-line
 
   function generateFormReader() {
     const tableForInputElement = {
@@ -483,4 +488,9 @@
   const eee = ddd.chain(SS.identity);
   SS.log(eee);
   SS.log(eee.getOrElse('error detected'));
+
+  console.debug('==========END_OF_MAIN=========='); // eslint-disable-line
 });
+
+setTimeout(() => console.debug('setTimeout(0ms)')); // eslint-disable-line
+console.debug('==========END_OF_FILE=========='); // eslint-disable-line
