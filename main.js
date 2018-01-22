@@ -1,8 +1,8 @@
 ;Promise.resolve().then(() => { // eslint-disable-line no-extra-semi
   'use strict';
 
-  // "QQ" is the name space for platform-independent fundamental internal helper functions
-  const QQ = Object.freeze(Object.assign(
+  // platform-independent fundamental pure functions
+  const SS = Object.freeze(Object.assign(
     {},
     {
       // predicate
@@ -14,12 +14,12 @@
 
       isPositiveInteger(...args) {
         const [arg] = args;
-        return QQ.isInteger(arg) && arg > 0;
+        return SS.isInteger(arg) && arg > 0;
       },
 
       isNonNegativeInteger(...args) {
         const [arg] = args;
-        return QQ.isInteger(arg) && arg >= 0;
+        return SS.isInteger(arg) && arg >= 0;
       },
 
       isCallable(...args) {
@@ -30,7 +30,7 @@
       isIterable(...args) {
         const [arg] = args;
         try {
-          return arg && QQ.isNonNegativeInteger(arg.length) && (arg[0], true);
+          return arg && SS.isNonNegativeInteger(arg.length) && (arg[0], true);
         } catch (e_) {
           return false;
         }
@@ -38,19 +38,21 @@
     },
   ));
 
-  console.debug('==========END_OF_QQ=========='); // eslint-disable-line
-  return Promise.resolve(QQ); // explicitly create a new Promise object because the argument may have "then()" method
+  console.debug('==========END_OF_DEFINITION=========='); // eslint-disable-line
 
-}).then(QQ => {
+  return Promise.resolve(SS); // explicitly create a new Promise object because the argument may have "then()" method
+
+}).then(HH => {
   'use strict';
 
   const {document} = window; // eslint-disable-line no-undef
   const {console} = window; // eslint-disable-line no-undef
   const onload = handler => window.addEventListener('load', () => handler()); // eslint-disable-line no-undef
 
-  // "MM" is the name space for platform-dependent internal helper functions
-  const MM = Object.freeze(Object.assign(
+  // platform-dependent helper functions
+  const SS = Object.freeze(Object.assign(
     {},
+    HH,
     {
       // Console API
 
@@ -60,25 +62,25 @@
       },
 
       error(...args) {
-        MM.assert(args.length > 0);
+        SS.assert(args.length > 0);
         console.error(...args);
         return args[0];
       },
 
       debug(...args) {
-        MM.assert(args.length > 0);
-        console.debug(...MM.saveStackTrace(args, 'SS.debug():'));
+        SS.assert(args.length > 0);
+        console.debug(...SS.saveStackTrace(args, 'SS.debug():'));
         return args[0];
       },
 
       log(...args) {
-        MM.assert(args.length > 0);
+        SS.assert(args.length > 0);
         console.log(...args);
         return args[0];
       },
 
       warn(...args) {
-        MM.assert(args.length > 0);
+        SS.assert(args.length > 0);
         console.warn(...args);
         return args[0];
       },
@@ -87,7 +89,7 @@
       // DOM API
 
       querySelectorAll(...args) {
-        MM.assert(args.length === 1);
+        SS.assert(args.length === 1);
         const [query] = args;
         return document.querySelectorAll(query);
       },
@@ -96,52 +98,37 @@
       // Others
 
       saveStackTrace(...args) {
-        MM.assert(args.length < 3);
+        SS.assert(args.length < 3);
         if (args.length === 0) return new Error();
         const description = args[args.length - 1];
-        MM.assert(typeof description === 'string');
+        SS.assert(typeof description === 'string');
         const err = new Error(description);
         if (args.length === 1) return err;
         const [seq] = args;
-        MM.assert(QQ.isIterable(seq));
+        SS.assert(SS.isIterable(seq));
         if (seq.length > 0 && seq[seq.length - 1] instanceof Error) return seq;
         return Object.freeze([...seq, err]);
       },
 
       getPromiseForOnLoad(...args) {
-        MM.assert(args.length === 1);
+        SS.assert(args.length === 1);
         const [arg] = args;
         return new Promise(resolve => onload(() => resolve(arg)));
       },
     },
   ));
 
-  // "HH" is the name space for all internal helper functions
-  const HH = Object.freeze(Object.assign(
-    {},
-    QQ,
-    MM,
-  ));
+  console.debug('==========END_OF_DEFINITION=========='); // eslint-disable-line
 
-  console.debug('==========END_OF_HH=========='); // eslint-disable-line
-  return Promise.resolve(HH); // explicitly create a new Promise object because the argument may have "then()" method
+  return Promise.resolve(SS); // explicitly create a new Promise object because the argument may have "then()" method
 
 }).then(HH => {
   'use strict';
 
-  // NOTE: Use the name space "SS" because of following reasons:
-  //       - The underscore ("_") would not be suitable:
-  //         * An single underscore ("_") is often used as a placeholder.
-  //         * An identifier which starts with the underscore (e.g., "_foo") is often used as a private identifier.
-  //       - The dollar-sign ("$") would not be suitable:
-  //         * Old versions of ECMAScript specification explicitly say that the dollar sign is intended for use only in mechanically generated code.
-  //         * The single dollar-sign is already used by jQuery.
-  //         * A $-prefixed variable name is often used to show that it holds a jQuery object.
-  //         * Prefixes "$" and "$$" are reserved by AngularJS.
-  //       - A single alphabet letter is hard to search.
-  //       - The letter "S" is initial letter of this software.
+  // core functions
   const SS = Object.freeze(Object.assign(
     {},
+    HH,
     // folktale.core.lambda, // eslint-disable-line no-undef
     // folktale.fantasyLand, // eslint-disable-line no-undef
     {
@@ -162,16 +149,6 @@
       },
     },
     {
-      assert: HH.assert,
-      error: HH.error,
-      debug: HH.debug,
-      log: HH.log,
-      warn: HH.warn,
-
-      querySelectorAll: HH.querySelectorAll,
-
-      getPromiseForOnLoad: HH.getPromiseForOnLoad,
-
       //------------------------------------------------------------------------
       // Followings are platform-independent
 
@@ -187,7 +164,7 @@
         SS.assert(args.length > 0);
         const [pred, ...rest] = args;
         SS.assert(SS.isCallable(pred));
-        const restArgs = HH.saveStackTrace(rest, 'SS.assertEvery():');
+        const restArgs = SS.saveStackTrace(rest, 'SS.assertEvery():');
         return SS.forEach((e, i, arr) => SS.assert(pred(e), e, i, arr, ...restArgs));
       },
 
@@ -219,7 +196,7 @@
           SS.applyThis,
           (seq, ret_) => seq,
           'SS.tapDebug():',
-          [SS.debug, ...HH.saveStackTrace(args, 'SS.tapDebug():')],
+          [SS.debug, ...SS.saveStackTrace(args, 'SS.tapDebug():')],
         );
       },
 
@@ -279,7 +256,7 @@
         SS.assert(SS.isCallable(nativeFunc));
         SS.assert(SS.isCallable(selectResult));
         SS.assert(typeof name === 'string');
-        const stacktrace = HH.saveStackTrace(name);
+        const stacktrace = SS.saveStackTrace(name);
         return function nativeArrayFuncProxyHelper(...args) {
           SS.assert(args.length === 1, args, stacktrace);
           const [seq] = args;
@@ -332,7 +309,7 @@
 
       fromPairs(...args) { // curried version of http://folktale.origamitower.com/api/v2.1.0/en/folktale.core.object.from-pairs.frompairs.html
         SS.assert(args.length === 0);
-        const stacktrace = HH.saveStackTrace('SS.fromPairs():');
+        const stacktrace = SS.saveStackTrace('SS.fromPairs():');
         return SS.pipe(
           SS.assertEvery(SS.isSeq, stacktrace),
           SS.assertEvery(x => x.length === 2, stacktrace),
@@ -343,7 +320,7 @@
 
       seq2obj(...args) {
         SS.assert(args.length === 0);
-        const stacktrace = HH.saveStackTrace('SS.seq2obj():');
+        const stacktrace = SS.saveStackTrace('SS.seq2obj():');
         return SS.pipe(
           SS.tap(seq => SS.assert(seq.length % 2 === 0, stacktrace)),
           SS.chunk(2),
@@ -362,18 +339,13 @@
 
       isSeq: HH.isIterable,
 
-      isInteger: HH.isInteger,
-      isPositiveInteger: HH.isPositiveInteger,
-      isNonNegativeInteger: HH.isNonNegativeInteger,
-      isCallable: HH.isCallable,
-
       indirectCall(...args) {
         SS.assert(0 < args.length && args.length < 3);
         SS.assertEvery(SS.identity)(args);
         const [table, keygen = SS.identity] = args;
         SS.assert(table instanceof Object);
         SS.assert(SS.isCallable(keygen));
-        const stacktrace = HH.saveStackTrace('SS.indirectCall():');
+        const stacktrace = SS.saveStackTrace('SS.indirectCall():');
         return function indirectCallHelper(...args) {
           SS.assert(args.length > 0, args, stacktrace);
           const func = table[keygen(...args)];
@@ -399,7 +371,38 @@
     },
   ));
 
+  console.debug('==========END_OF_DEFINITION=========='); // eslint-disable-line
+
+  return Promise.resolve(SS); // explicitly create a new Promise object because the argument may have "then()" method
+
+}).then(HH => {
+  'use strict';
+
+  // NOTE: Use the name space "SS" because of following reasons:
+  //       - The underscore ("_") would not be suitable:
+  //         * An single underscore ("_") is often used as a placeholder.
+  //         * An identifier which starts with the underscore (e.g., "_foo") is often used as a private identifier.
+  //       - The dollar-sign ("$") would not be suitable:
+  //         * Old versions of ECMAScript specification explicitly say that the dollar sign is intended for use only in mechanically generated code.
+  //         * The single dollar-sign is already used by jQuery.
+  //         * A $-prefixed variable name is often used to show that it holds a jQuery object.
+  //         * Prefixes "$" and "$$" are reserved by AngularJS.
+  //       - A single alphabet letter is hard to search.
+  //       - The letter "S" is initial letter of this software.
+  const SS = Object.freeze(Object.assign(
+    {},
+    HH,
+    {
+      assert: HH.assert,
+      error: HH.error,
+      debug: HH.debug,
+      log: HH.log,
+      warn: HH.warn,
+    },
+  ));
+
   console.debug('==========END_OF_SS=========='); // eslint-disable-line
+
   return Promise.resolve(SS); // explicitly create a new Promise object because the argument may have "then()" method
 
 }).then(SS => {
