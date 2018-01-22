@@ -120,13 +120,13 @@
   //       - The letter "S" is initial letter of this software.
   const SS = Object.freeze(Object.assign(
     {},
-    // folktale.core.lambda,
-    // folktale.fantasyLand,
+    // folktale.core.lambda, // eslint-disable-line no-undef
+    // folktale.fantasyLand, // eslint-disable-line no-undef
     {
-      Maybe: folktale.maybe,
-      Result: folktale.result,
-      Validation: folktale.validation,
-      Union: folktale.adt.union,
+      Maybe: folktale.maybe, // eslint-disable-line no-undef
+      Result: folktale.result, // eslint-disable-line no-undef
+      Validation: folktale.validation, // eslint-disable-line no-undef
+      Union: folktale.adt.union, // eslint-disable-line no-undef
 
       isMonad(m) {
         if (SS.Result && SS.isCallable(SS.Result.hasInstance) && SS.Result.hasInstance(m)) return true;
@@ -435,7 +435,7 @@
     const target = SS.querySelector('#TargetParagraph');
     const original = target.innerHTML;
     let isReplaced = false;
-    setInterval(() => {
+    setInterval(() => { // eslint-disable-line no-undef
       target.innerHTML = (isReplaced = ! isReplaced) ? replacement : original;
     }, 5000);
   }
