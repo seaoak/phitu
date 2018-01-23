@@ -136,7 +136,8 @@
       Result: folktale.result, // eslint-disable-line no-undef
       Validation: folktale.validation, // eslint-disable-line no-undef
       Union: folktale.adt.union, // eslint-disable-line no-undef
-
+    },
+    {
       isMonad(m) {
         if (SS.Result && SS.isCallable(SS.Result.hasInstance) && SS.Result.hasInstance(m)) return true;
         if (SS.Maybe && SS.isCallable(SS.Maybe.hasInstance) && SS.Maybe.hasInstance(m)) return true;
