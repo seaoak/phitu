@@ -212,6 +212,26 @@
         return args[0];
       },
 
+      partial(...args) {
+        SS.assert(args.length > 1, args);
+        const [func, ...restArgs] = args;
+        SS.assert(SS.isCallable(func), args);
+        return function partialHelper(...args) {
+          SS.assert(args.length >= 0); // allow no appended argument (just only used as lazy)
+          return func(...restArgs, ...args);
+        };
+      },
+
+      partialRight(...args) {
+        SS.assert(args.length > 1, args);
+        const [func, ...restArgs] = args;
+        SS.assert(SS.isCallable(func), args);
+        return function partialRightHelper(...args) {
+          SS.assert(args.length >= 0); // allow no prepended argument (just only used as lazy)
+          return func(...args, ...restArgs);
+        };
+      },
+
       //----------------------------------------------------------------------
 
       isSeq: HH.isIterable,
