@@ -338,7 +338,12 @@
 
       last(...args) {
         SS.assert(args.length === 0, args);
-        return SS.nth(-1);
+        return SS.nativeArrayFuncProxy(
+          SS.applyThis,
+          (seq_, ret) => ret, // not freeze
+          [seq => seq.length === 0 ? undefined : seq[seq.length - 1]],
+          'SS.last():',
+        );
       },
 
       //----------------------------------------------------------------------
