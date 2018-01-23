@@ -330,6 +330,26 @@
         );
       },
 
+      every(...args) {
+        SS.assert(args.length === 1, args);
+        SS.assert(SS.isCallable(args[0]), args);
+        return SS.nativeArrayFuncProxy(
+          'every',
+          (seq_, ret) => ret, // not freeze
+          args,
+        );
+      },
+
+      some(...args) {
+        SS.assert(args.length === 1, args);
+        SS.assert(SS.isCallable(args[0]), args);
+        return SS.nativeArrayFuncProxy(
+          'some',
+          (seq_, ret) => ret, // not freeze
+          args,
+        );
+      },
+
       chunk(...args) { // curried version of https://lodash.com/docs/#chunk
         SS.assert(args.length < 2, args);
         SS.assertEvery(SS.isPositiveInteger)(args);
