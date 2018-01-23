@@ -163,11 +163,16 @@
     HH,
     {
       nativeArrayFuncProxy(...args) {
-        SS.assert(args.length === 4, args);
-        const [nativeFunc, selectResult, name, baseArgs] = args;
-        SS.assert(SS.isCallable(nativeFunc), args);
-        SS.assert(SS.isCallable(selectResult), args);
-        SS.assert(typeof name === 'string', args);
+        SS.assert(args.length === 3 || args.length === 4, args);
+        const [nativeFuncOrName, selectResult, baseArgs, nameOrUndef] = args;
+        SS.assert(nativeFuncOrName, args);
+        const isShortForm = args.length === 3;
+        SS.assert(! isShortForm || (typeof nativeFuncOrName === 'string' && nativeFuncOrName), args);
+        const nativeFunc = isShortForm ? Array.prototype[nativeFuncOrName] : nativeFuncOrName;
+        SS.assert(SS.isCallable(nativeFunc), nativeFunc, args);
+        SS.assert(SS.isCallable(selectResult), selectResult, args);
+        SS.assert(isShortForm || (typeof nameOrUndef === 'string' && nameOrUndef), args);
+        const name = nameOrUndef || `SS.${nativeFuncOrName}():`;
         const stacktrace = SS.saveStackTrace(name);
         return function nativeArrayFuncProxyHelper(...args) {
           SS.assert(args.length === 1, args, stacktrace);
@@ -237,17 +242,16 @@
         return SS.nativeArrayFuncProxy(
           SS.applyThis,
           (seq, ret_) => seq,
-          'SS.tap():',
           args,
+          'SS.tap():',
         );
       },
 
       forEach(...args) {
         SS.assert(args.length === 1, args);
         return SS.nativeArrayFuncProxy(
-          Array.prototype.forEach,
+          'forEach',
           (seq, ret_) => seq,
-          'SS.forEach():',
           args,
         );
       },
@@ -255,9 +259,8 @@
       filter(...args) {
         SS.assert(args.length === 1, args);
         return SS.nativeArrayFuncProxy(
-          Array.prototype.filter,
+          'filter',
           (seq_, ret) => Object.freeze(ret),
-          'SS.filter():',
           args,
         );
       },
@@ -265,9 +268,8 @@
       map(...args) {
         SS.assert(args.length === 1, args);
         return SS.nativeArrayFuncProxy(
-          Array.prototype.map,
+          'map',
           (seq_, ret) => Object.freeze(ret),
-          'SS.map():',
           args,
         );
       },
@@ -275,9 +277,8 @@
       reduce(...args) {
         SS.assert(args.length === 1 || args.length === 2, args);
         return SS.nativeArrayFuncProxy(
-          Array.prototype.reduce,
+          'reduce',
           (seq_, ret) => ret,
-          'SS.reduce():',
           args,
         );
       },
@@ -285,9 +286,8 @@
       reduceRight(...args) {
         SS.assert(args.length === 1 || args.length === 2, args);
         return SS.nativeArrayFuncProxy(
-          Array.prototype.reduceRight,
+          'reduceRight',
           (seq_, ret) => ret,
-          'SS.reduceRight():',
           args,
         );
       },
@@ -295,9 +295,8 @@
       slice(...args) {
         SS.assert(args.length < 3, args);
         return SS.nativeArrayFuncProxy(
-          Array.prototype.slice,
+          'slice',
           (seq_, ret) => Object.freeze(ret),
-          'SS.slice():',
           args,
         );
       },
@@ -323,8 +322,8 @@
         return SS.nativeArrayFuncProxy(
           SS.applyThis,
           (seq_, ret) => ret,
-          name,
           [func],
+          name,
         );
       },
 
@@ -394,8 +393,8 @@
         return SS.nativeArrayFuncProxy(
           SS.applyThis,
           (seq, ret_) => seq,
-          'SS.tapDebug():',
           [SS.debug, ...SS.saveStackTrace(args, 'SS.tapDebug():')],
+          'SS.tapDebug():',
         );
       },
     },
