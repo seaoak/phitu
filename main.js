@@ -284,7 +284,7 @@
         SS.assert(SS.isCallable(args[0]), args);
         return SS.nativeArrayFuncProxy(
           'reduce',
-          (seq_, ret) => ret,
+          (seq_, ret) => ret, // not freeze
           args,
         );
       },
@@ -294,7 +294,7 @@
         SS.assert(SS.isCallable(args[0]), args);
         return SS.nativeArrayFuncProxy(
           'reduceRight',
-          (seq_, ret) => ret,
+          (seq_, ret) => ret, // not freeze
           args,
         );
       },
@@ -330,7 +330,7 @@
         const func = pos >= 0 ? func1 : func2;
         return SS.nativeArrayFuncProxy(
           SS.applyThis,
-          (seq_, ret) => ret,
+          (seq_, ret) => ret, // not freeze
           [func],
           name,
         );
