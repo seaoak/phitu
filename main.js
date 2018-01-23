@@ -106,7 +106,7 @@
         if (args.length === 1) return err;
         const [seq] = args;
         SS.assert(SS.isIterable(seq), args);
-        if (seq.length > 0 && seq[seq.length - 1] instanceof Error) return seq;
+        if (seq.length > 0 && seq[seq.length - 1] instanceof Error) return seq; // drop "err"
         return Object.freeze([...seq, err]);
       },
 
