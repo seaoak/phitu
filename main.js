@@ -568,7 +568,7 @@
   const config = generateFormReader()(SS.querySelector('#GlobalNavigation').childNodes);
   SS.debug(config);
   SS.debug(config.GlobalSwitch);
-  SS.debug('==================================================');
+  console.debug('=================================================='); // eslint-disable-line
 
   /* eslint-disable no-magic-numbers */
   /* eslint-disable comma-spacing */
@@ -576,17 +576,17 @@
   SS.debug(SS.toSeq(1,2,3));
   SS.debug(SS.toSeq([1,2,3]));
   SS.debug(SS.toSeq([1,2,3], [4,5,6], [7,8,9]));
-  SS.debug('==================================================');
+  console.debug('=================================================='); // eslint-disable-line
   SS.debug(SS.last()(SS.toSeq(1,2,3)));
   SS.debug(SS.last()(SS.toSeq([1])));
   SS.debug(SS.last()(SS.toSeq([])));
-  SS.debug('==================================================');
+  console.debug('=================================================='); // eslint-disable-line
   const pairs = Object.freeze(['aaa', 1, 'bbb', 2, 'ccc', 3, 'ddd', 4, 'eee', 5]);
   SS.debug(SS.chunk()(pairs));
   SS.debug(SS.chunk(2)(pairs));
   SS.debug(SS.chunk(3)(pairs));
   SS.debug(SS.seq2obj()(pairs));
-  SS.debug('==================================================');
+  console.debug('=================================================='); // eslint-disable-line
 
   function sasicaeMain() {
     const replacement = SS.querySelector('#Replacement').innerHTML;
