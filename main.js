@@ -388,6 +388,14 @@
 
       //----------------------------------------------------------------------
 
+      tapAssert(...args) {
+        SS.assert(args.length > 0);
+        const [pred, ...restArgs] = args;
+        SS.assert(SS.isCallable(pred), args);
+        const stacktrace = [args, SS.saveStackTrace('SS.tapAssert():')];
+        return SS.tap(seq => SS.assert(pred(seq), seq, ...restArgs, ...stacktrace));
+      },
+
       assertEvery(...args) {
         SS.assert(args.length > 0);
         const [pred, ...restArgs] = args;
@@ -413,7 +421,7 @@
         SS.assert(args.length === 0, args);
         const stacktrace = [args, SS.saveStackTrace('SS.seq2obj():')];
         return SS.pipe(
-          SS.tap(seq => SS.assert(seq.length % 2 === 0, ...stacktrace)),
+          SS.tapAssert(seq => seq.length % 2 === 0, ...stacktrace),
           SS.chunk(2),
           SS.fromPairs(),
           Object.freeze,
