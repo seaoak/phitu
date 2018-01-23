@@ -174,11 +174,11 @@
         SS.assert(SS.isCallable(selectResult), selectResult, args);
         SS.assert(isShortForm || (typeof nameOrUndef === 'string' && nameOrUndef), args);
         const name = nameOrUndef || `SS.${nativeFuncOrName}():`;
-        const stacktrace = SS.saveStackTrace(name);
+        const stacktrace = [args, SS.saveStackTrace(name)];
         return function nativeArrayFuncProxyHelper(...args) {
-          SS.assert(args.length === 1, args, stacktrace);
+          SS.assert(args.length === 1, args, ...stacktrace);
           const [seq] = args;
-          SS.assert(SS.isIterable(seq), args, stacktrace);
+          SS.assert(SS.isIterable(seq), args, ...stacktrace);
           const ret = nativeFunc.apply(seq, baseArgs);
           return selectResult(seq, ret);
         };
@@ -345,20 +345,20 @@
 
       assertEvery(...args) {
         SS.assert(args.length > 0);
-        const [pred, ...rest] = args;
+        const [pred, ...restArgs] = args;
         SS.assert(SS.isCallable(pred), args);
-        const restArgs = SS.saveStackTrace(rest, 'SS.assertEvery():');
-        return SS.forEach((e, i, arr) => SS.assert(pred(e), e, i, arr, ...restArgs));
+        const stacktrace = [args, SS.saveStackTrace('SS.assertEvery():')];
+        return SS.forEach((e, i, arr) => SS.assert(pred(e), e, i, arr, ...restArgs, ...stacktrace));
       },
 
       //----------------------------------------------------------------------
 
       fromPairs(...args) { // curried version of http://folktale.origamitower.com/api/v2.1.0/en/folktale.core.object.from-pairs.frompairs.html
         SS.assert(args.length === 0, args);
-        const stacktrace = SS.saveStackTrace('SS.fromPairs():');
+        const stacktrace = [args, SS.saveStackTrace('SS.fromPairs():')];
         return SS.pipe(
-          SS.assertEvery(SS.isSeq, args, stacktrace),
-          SS.assertEvery(x => x.length === 2, args, stacktrace),
+          SS.assertEvery(SS.isSeq, ...stacktrace),
+          SS.assertEvery(x => x.length === 2, ...stacktrace),
           SS.reduce((acc, [name, value]) => Object.defineProperty(acc, name, {value: value, enumerable: true}), {}),
           Object.freeze,
         );
@@ -366,9 +366,9 @@
 
       seq2obj(...args) {
         SS.assert(args.length === 0, args);
-        const stacktrace = SS.saveStackTrace('SS.seq2obj():');
+        const stacktrace = [args, SS.saveStackTrace('SS.seq2obj():')];
         return SS.pipe(
-          SS.tap(seq => SS.assert(seq.length % 2 === 0, args, stacktrace)),
+          SS.tap(seq => SS.assert(seq.length % 2 === 0, ...stacktrace)),
           SS.chunk(2),
           SS.fromPairs(),
           Object.freeze,
@@ -414,12 +414,12 @@
         const [table, keygen = SS.identity] = args;
         SS.assert(table instanceof Object, args);
         SS.assert(SS.isCallable(keygen), args);
-        const stacktrace = SS.saveStackTrace('SS.indirectCall():');
+        const stacktrace = [args, SS.saveStackTrace('SS.indirectCall():')];
         return function indirectCallHelper(...args) {
-          SS.assert(args.length > 0, args, stacktrace);
+          SS.assert(args.length > 0, args, ...stacktrace);
           const func = table[keygen(...args)];
           if (func === undefined) return undefined;
-          SS.assert(SS.isCallable(func), func, args, table, stacktrace);
+          SS.assert(SS.isCallable(func), func, args, table, ...stacktrace);
           return func(...args);
         };
       },
