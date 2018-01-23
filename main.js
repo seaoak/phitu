@@ -227,7 +227,7 @@
 
       pipe(...args) {
         SS.assert(args.length > 0);
-        SS.assert(args.every(SS.isCallable), args);
+        SS.assertEvery(SS.isCallable)(args);
         const [first, ...funcList] = args;
         return function pipeHelper(...args) {
           const initialValue = (args.length === 1) ? SS.chainOrCall(args[0], first) : first(...args);
@@ -239,6 +239,7 @@
 
       tap(...args) {
         SS.assert(args.length > 0);
+        SS.assert(SS.isCallable(args[0]), args);
         return SS.nativeArrayFuncProxy(
           SS.applyThis,
           (seq, ret_) => seq,
@@ -249,6 +250,7 @@
 
       forEach(...args) {
         SS.assert(args.length === 1, args);
+        SS.assert(SS.isCallable(args[0]), args);
         return SS.nativeArrayFuncProxy(
           'forEach',
           (seq, ret_) => seq,
@@ -258,6 +260,7 @@
 
       filter(...args) {
         SS.assert(args.length === 1, args);
+        SS.assert(SS.isCallable(args[0]), args);
         return SS.nativeArrayFuncProxy(
           'filter',
           (seq_, ret) => Object.freeze(ret),
@@ -267,6 +270,7 @@
 
       map(...args) {
         SS.assert(args.length === 1, args);
+        SS.assert(SS.isCallable(args[0]), args);
         return SS.nativeArrayFuncProxy(
           'map',
           (seq_, ret) => Object.freeze(ret),
@@ -276,6 +280,7 @@
 
       reduce(...args) {
         SS.assert(args.length === 1 || args.length === 2, args);
+        SS.assert(SS.isCallable(args[0]), args);
         return SS.nativeArrayFuncProxy(
           'reduce',
           (seq_, ret) => ret,
@@ -285,6 +290,7 @@
 
       reduceRight(...args) {
         SS.assert(args.length === 1 || args.length === 2, args);
+        SS.assert(SS.isCallable(args[0]), args);
         return SS.nativeArrayFuncProxy(
           'reduceRight',
           (seq_, ret) => ret,
@@ -294,6 +300,8 @@
 
       slice(...args) {
         SS.assert(args.length < 3, args);
+        SS.assert(args.length === 0 || SS.isInteger(args[0]), args);
+        SS.assert(args.length < 2 || SS.isNonNegativeInteger(args[1]), args);
         return SS.nativeArrayFuncProxy(
           'slice',
           (seq_, ret) => Object.freeze(ret),
