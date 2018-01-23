@@ -125,7 +125,7 @@
 }).then(HH => {
   'use strict';
 
-  // core functions
+  // import from folktale
   const SS = Object.freeze(Object.assign(
     {},
     HH,
@@ -148,18 +148,59 @@
         return SS.isMonad(m) ? m.chain(f) : f(m);
       },
     },
-    {
-      //------------------------------------------------------------------------
-      // Followings are platform-independent
+  ));
 
-      querySelector(...args) {
-        SS.assert(args.length === 1);
-        const [query] = args;
-        const results = SS.querySelectorAll(query) || [];
-        if (results.length !== 1) SS.warn('querySelector(): failed (length=' + results.length + '): ' + query);
-        return results[0];
+  console.debug('==========END_OF_DEFINITION=========='); // eslint-disable-line
+
+  return Promise.resolve(SS); // explicitly create a new Promise object because the argument may have "then()" method
+
+}).then(HH => {
+  'use strict';
+
+  // helper functions
+  const SS = Object.freeze(Object.assign(
+    {},
+    HH,
+    {
+      nativeArrayFuncProxy(...args) {
+        SS.assert(args.length === 4);
+        const [nativeFunc, selectResult, name, baseArgs] = args;
+        SS.assert(SS.isCallable(nativeFunc));
+        SS.assert(SS.isCallable(selectResult));
+        SS.assert(typeof name === 'string');
+        const stacktrace = SS.saveStackTrace(name);
+        return function nativeArrayFuncProxyHelper(...args) {
+          SS.assert(args.length === 1, args, stacktrace);
+          const [seq] = args;
+          SS.assert(SS.isIterable(seq), args, stacktrace);
+          const ret = nativeFunc.apply(seq, baseArgs);
+          return selectResult(seq, ret);
+        };
       },
 
+      applyThis(...args) {
+        SS.assert(args.length > 0);
+        const [func, ...restArgs] = args;
+        SS.assert(SS.isCallable(func));
+        const that = this;
+        SS.assert(that);
+        return func(that, ...restArgs);
+      },
+    },
+  ));
+
+  console.debug('==========END_OF_DEFINITION=========='); // eslint-disable-line
+
+  return Promise.resolve(SS); // explicitly create a new Promise object because the argument may have "then()" method
+
+}).then(HH => {
+  'use strict';
+
+  // core functions
+  const SS = Object.freeze(Object.assign(
+    {},
+    HH,
+    {
       assertEvery(...args) {
         SS.assert(args.length > 0);
         const [pred, ...rest] = args;
@@ -167,9 +208,6 @@
         const restArgs = SS.saveStackTrace(rest, 'SS.assertEvery():');
         return SS.forEach((e, i, arr) => SS.assert(pred(e), e, i, arr, ...restArgs));
       },
-
-      //------------------------------------------------------------------------
-      // Followings are PURE functions
 
       pipe(...args) {
         SS.assert(args.length > 0);
@@ -188,15 +226,6 @@
           (seq, ret_) => seq,
           'SS.tap():',
           args,
-        );
-      },
-
-      tapDebug(...args) {
-        return SS.nativeArrayFuncProxy(
-          SS.applyThis,
-          (seq, ret_) => seq,
-          'SS.tapDebug():',
-          [SS.debug, ...SS.saveStackTrace(args, 'SS.tapDebug():')],
         );
       },
 
@@ -248,22 +277,6 @@
           'SS.reduceRight():',
           args,
         );
-      },
-
-      nativeArrayFuncProxy(...args) {
-        SS.assert(args.length === 4);
-        const [nativeFunc, selectResult, name, baseArgs] = args;
-        SS.assert(SS.isCallable(nativeFunc));
-        SS.assert(SS.isCallable(selectResult));
-        SS.assert(typeof name === 'string');
-        const stacktrace = SS.saveStackTrace(name);
-        return function nativeArrayFuncProxyHelper(...args) {
-          SS.assert(args.length === 1, args, stacktrace);
-          const [seq] = args;
-          SS.assert(SS.isSeq(seq), args, stacktrace);
-          const ret = nativeFunc.apply(seq, baseArgs);
-          return selectResult(seq, ret);
-        };
       },
 
       slice(...args) {
@@ -339,6 +352,44 @@
 
       isSeq: HH.isIterable,
 
+      identity(...args) {
+        SS.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
+        return args[0];
+      },
+    },
+  ));
+
+  console.debug('==========END_OF_DEFINITION=========='); // eslint-disable-line
+
+  return Promise.resolve(SS); // explicitly create a new Promise object because the argument may have "then()" method
+
+}).then(HH => {
+  'use strict';
+
+  // derived utility functions
+  const SS = Object.freeze(Object.assign(
+    {},
+    HH,
+    {
+      querySelector(...args) {
+        SS.assert(args.length === 1);
+        const [query] = args;
+        const results = SS.querySelectorAll(query) || [];
+        if (results.length !== 1) SS.warn('querySelector(): failed (length=' + results.length + '): ' + query);
+        return results[0];
+      },
+    },
+    {
+      tapDebug(...args) {
+        return SS.nativeArrayFuncProxy(
+          SS.applyThis,
+          (seq, ret_) => seq,
+          'SS.tapDebug():',
+          [SS.debug, ...SS.saveStackTrace(args, 'SS.tapDebug():')],
+        );
+      },
+    },
+    {
       indirectCall(...args) {
         SS.assert(0 < args.length && args.length < 3);
         SS.assertEvery(SS.identity)(args);
@@ -354,20 +405,21 @@
           return func(...args);
         };
       },
+    },
+  ));
 
-      applyThis(...args) {
-        SS.assert(args.length > 0);
-        const [func, ...restArgs] = args;
-        SS.assert(SS.isCallable(func));
-        const that = this;
-        SS.assert(that);
-        return func(that, ...restArgs);
-      },
+  console.debug('==========END_OF_DEFINITION=========='); // eslint-disable-line
 
-      identity(...args) {
-        SS.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
-        return args[0];
-      },
+  return Promise.resolve(SS); // explicitly create a new Promise object because the argument may have "then()" method
+
+}).then(HH => {
+  'use strict';
+
+  // supplement
+  const SS = Object.freeze(Object.assign(
+    {},
+    HH,
+    {
     },
   ));
 
