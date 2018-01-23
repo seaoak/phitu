@@ -89,7 +89,7 @@
       // DOM API
 
       querySelectorAll(...args) {
-        SS.assert(args.length === 1);
+        SS.assert(args.length === 1, args);
         const [query] = args;
         return document.querySelectorAll(query);
       },
@@ -98,20 +98,20 @@
       // Others
 
       saveStackTrace(...args) {
-        SS.assert(args.length < 3);
+        SS.assert(args.length < 3, args);
         if (args.length === 0) return new Error();
         const description = args[args.length - 1];
-        SS.assert(typeof description === 'string');
+        SS.assert(typeof description === 'string', args);
         const err = new Error(description);
         if (args.length === 1) return err;
         const [seq] = args;
-        SS.assert(SS.isIterable(seq));
+        SS.assert(SS.isIterable(seq), args);
         if (seq.length > 0 && seq[seq.length - 1] instanceof Error) return seq;
         return Object.freeze([...seq, err]);
       },
 
       getPromiseForOnLoad(...args) {
-        SS.assert(args.length === 1);
+        SS.assert(args.length === 1, args);
         const [arg] = args;
         return new Promise(resolve => onload(() => resolve(arg)));
       },
@@ -144,7 +144,7 @@
       },
 
       chainOrCall(m, f) {
-        SS.assert(SS.isCallable(f));
+        SS.assert(SS.isCallable(f), m, f);
         return SS.isMonad(m) ? m.chain(f) : f(m);
       },
     },
@@ -163,11 +163,11 @@
     HH,
     {
       nativeArrayFuncProxy(...args) {
-        SS.assert(args.length === 4);
+        SS.assert(args.length === 4, args);
         const [nativeFunc, selectResult, name, baseArgs] = args;
-        SS.assert(SS.isCallable(nativeFunc));
-        SS.assert(SS.isCallable(selectResult));
-        SS.assert(typeof name === 'string');
+        SS.assert(SS.isCallable(nativeFunc), args);
+        SS.assert(SS.isCallable(selectResult), args);
+        SS.assert(typeof name === 'string', args);
         const stacktrace = SS.saveStackTrace(name);
         return function nativeArrayFuncProxyHelper(...args) {
           SS.assert(args.length === 1, args, stacktrace);
@@ -181,9 +181,9 @@
       applyThis(...args) {
         SS.assert(args.length > 0);
         const [func, ...restArgs] = args;
-        SS.assert(SS.isCallable(func));
+        SS.assert(SS.isCallable(func), args);
         const that = this;
-        SS.assert(that);
+        SS.assert(that, args);
         return func(that, ...restArgs);
       },
     },
@@ -222,7 +222,7 @@
 
       pipe(...args) {
         SS.assert(args.length > 0);
-        SS.assert(args.every(SS.isCallable));
+        SS.assert(args.every(SS.isCallable), args);
         const [first, ...funcList] = args;
         return function pipeHelper(...args) {
           const initialValue = (args.length === 1) ? SS.chainOrCall(args[0], first) : first(...args);
@@ -243,7 +243,7 @@
       },
 
       forEach(...args) {
-        SS.assert(args.length === 1);
+        SS.assert(args.length === 1, args);
         return SS.nativeArrayFuncProxy(
           Array.prototype.forEach,
           (seq, ret_) => seq,
@@ -253,7 +253,7 @@
       },
 
       filter(...args) {
-        SS.assert(args.length === 1);
+        SS.assert(args.length === 1, args);
         return SS.nativeArrayFuncProxy(
           Array.prototype.filter,
           (seq_, ret) => Object.freeze(ret),
@@ -263,7 +263,7 @@
       },
 
       map(...args) {
-        SS.assert(args.length === 1);
+        SS.assert(args.length === 1, args);
         return SS.nativeArrayFuncProxy(
           Array.prototype.map,
           (seq_, ret) => Object.freeze(ret),
@@ -273,7 +273,7 @@
       },
 
       reduce(...args) {
-        SS.assert(args.length === 1 || args.length === 2);
+        SS.assert(args.length === 1 || args.length === 2, args);
         return SS.nativeArrayFuncProxy(
           Array.prototype.reduce,
           (seq_, ret) => ret,
@@ -283,7 +283,7 @@
       },
 
       reduceRight(...args) {
-        SS.assert(args.length === 1 || args.length === 2);
+        SS.assert(args.length === 1 || args.length === 2, args);
         return SS.nativeArrayFuncProxy(
           Array.prototype.reduceRight,
           (seq_, ret) => ret,
@@ -293,7 +293,7 @@
       },
 
       slice(...args) {
-        SS.assert(args.length < 3);
+        SS.assert(args.length < 3, args);
         return SS.nativeArrayFuncProxy(
           Array.prototype.slice,
           (seq_, ret) => Object.freeze(ret),
@@ -303,7 +303,7 @@
       },
 
       chunk(...args) { // curried version of https://lodash.com/docs/#chunk
-        SS.assert(args.length < 2);
+        SS.assert(args.length < 2, args);
         SS.assertEvery(SS.isPositiveInteger)(args);
         const [size = 1] = args;
         return SS.pipe(
@@ -313,9 +313,9 @@
       },
 
       nth(...args) {
-        SS.assert(args.length === 1);
+        SS.assert(args.length === 1, args);
         const [pos] = args;
-        SS.assert(SS.isInteger(pos));
+        SS.assert(SS.isInteger(pos), args);
         const name = `SS.nth(${pos}):`;
         const func1 = seq => ((seq.length < pos + 1) ? undefined : seq[pos]);
         const func2 = seq => ((seq.length < -pos) ? undefined : seq[seq.length + pos]);
@@ -329,7 +329,7 @@
       },
 
       last(...args) {
-        SS.assert(args.length === 0);
+        SS.assert(args.length === 0, args);
         return SS.nth(-1);
       },
 
@@ -338,7 +338,7 @@
       assertEvery(...args) {
         SS.assert(args.length > 0);
         const [pred, ...rest] = args;
-        SS.assert(SS.isCallable(pred));
+        SS.assert(SS.isCallable(pred), args);
         const restArgs = SS.saveStackTrace(rest, 'SS.assertEvery():');
         return SS.forEach((e, i, arr) => SS.assert(pred(e), e, i, arr, ...restArgs));
       },
@@ -346,21 +346,21 @@
       //----------------------------------------------------------------------
 
       fromPairs(...args) { // curried version of http://folktale.origamitower.com/api/v2.1.0/en/folktale.core.object.from-pairs.frompairs.html
-        SS.assert(args.length === 0);
+        SS.assert(args.length === 0, args);
         const stacktrace = SS.saveStackTrace('SS.fromPairs():');
         return SS.pipe(
-          SS.assertEvery(SS.isSeq, stacktrace),
-          SS.assertEvery(x => x.length === 2, stacktrace),
+          SS.assertEvery(SS.isSeq, args, stacktrace),
+          SS.assertEvery(x => x.length === 2, args, stacktrace),
           SS.reduce((acc, [name, value]) => Object.defineProperty(acc, name, {value: value, enumerable: true}), {}),
           Object.freeze,
         );
       },
 
       seq2obj(...args) {
-        SS.assert(args.length === 0);
+        SS.assert(args.length === 0, args);
         const stacktrace = SS.saveStackTrace('SS.seq2obj():');
         return SS.pipe(
-          SS.tap(seq => SS.assert(seq.length % 2 === 0, stacktrace)),
+          SS.tap(seq => SS.assert(seq.length % 2 === 0, args, stacktrace)),
           SS.chunk(2),
           SS.fromPairs(),
           Object.freeze,
@@ -382,7 +382,7 @@
     HH,
     {
       querySelector(...args) {
-        SS.assert(args.length === 1);
+        SS.assert(args.length === 1, args);
         const [query] = args;
         const results = SS.querySelectorAll(query) || [];
         if (results.length !== 1) SS.warn('querySelector(): failed (length=' + results.length + '): ' + query);
@@ -401,11 +401,11 @@
     },
     {
       indirectCall(...args) {
-        SS.assert(0 < args.length && args.length < 3);
+        SS.assert(args.length === 1 || args.length === 2, args);
         SS.assertEvery(SS.identity)(args);
         const [table, keygen = SS.identity] = args;
-        SS.assert(table instanceof Object);
-        SS.assert(SS.isCallable(keygen));
+        SS.assert(table instanceof Object, args);
+        SS.assert(SS.isCallable(keygen), args);
         const stacktrace = SS.saveStackTrace('SS.indirectCall():');
         return function indirectCallHelper(...args) {
           SS.assert(args.length > 0, args, stacktrace);
