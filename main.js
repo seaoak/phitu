@@ -201,13 +201,24 @@
     {},
     HH,
     {
-      assertEvery(...args) {
-        SS.assert(args.length > 0);
-        const [pred, ...rest] = args;
-        SS.assert(SS.isCallable(pred));
-        const restArgs = SS.saveStackTrace(rest, 'SS.assertEvery():');
-        return SS.forEach((e, i, arr) => SS.assert(pred(e), e, i, arr, ...restArgs));
+      identity(...args) {
+        SS.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
+        return args[0];
       },
+
+      //----------------------------------------------------------------------
+
+      isSeq: HH.isIterable,
+
+      toSeq(...args) { // flatten
+        SS.assert(args.length > 0);
+        if (args.length > 1) return Object.freeze([].concat(...args.map(x => SS.toSeq(x))));
+        const [arg] = args;
+        if (! SS.isSeq(arg)) return Object.freeze([arg]);
+        return Object.freeze([...arg]);
+      },
+
+      //----------------------------------------------------------------------
 
       pipe(...args) {
         SS.assert(args.length > 0);
@@ -218,6 +229,8 @@
           return funcList.reduce((acc, func) => SS.chainOrCall(acc, func), initialValue);
         };
       },
+
+      //----------------------------------------------------------------------
 
       tap(...args) {
         SS.assert(args.length > 0);
@@ -289,9 +302,14 @@
         );
       },
 
-      last(...args) {
-        SS.assert(args.length === 0);
-        return SS.nth(-1);
+      chunk(...args) { // curried version of https://lodash.com/docs/#chunk
+        SS.assert(args.length < 2);
+        SS.assertEvery(SS.isPositiveInteger)(args);
+        const [size = 1] = args;
+        return SS.pipe(
+          SS.reduce((acc, x_, i, self) => (i % size === 0) ? [...acc, SS.slice(i, i + size)(self)] : acc, []),
+          Object.freeze,
+        );
       },
 
       nth(...args) {
@@ -310,15 +328,22 @@
         );
       },
 
-      chunk(...args) { // curried version of https://lodash.com/docs/#chunk
-        SS.assert(args.length < 2);
-        SS.assertEvery(SS.isPositiveInteger)(args);
-        const [size = 1] = args;
-        return SS.pipe(
-          SS.reduce((acc, x_, i, self) => (i % size === 0) ? [...acc, SS.slice(i, i + size)(self)] : acc, []),
-          Object.freeze,
-        );
+      last(...args) {
+        SS.assert(args.length === 0);
+        return SS.nth(-1);
       },
+
+      //----------------------------------------------------------------------
+
+      assertEvery(...args) {
+        SS.assert(args.length > 0);
+        const [pred, ...rest] = args;
+        SS.assert(SS.isCallable(pred));
+        const restArgs = SS.saveStackTrace(rest, 'SS.assertEvery():');
+        return SS.forEach((e, i, arr) => SS.assert(pred(e), e, i, arr, ...restArgs));
+      },
+
+      //----------------------------------------------------------------------
 
       fromPairs(...args) { // curried version of http://folktale.origamitower.com/api/v2.1.0/en/folktale.core.object.from-pairs.frompairs.html
         SS.assert(args.length === 0);
@@ -340,21 +365,6 @@
           SS.fromPairs(),
           Object.freeze,
         );
-      },
-
-      toSeq(...args) { // flatten
-        SS.assert(args.length > 0);
-        if (args.length > 1) return Object.freeze([].concat(...args.map(x => SS.toSeq(x))));
-        const [arg] = args;
-        if (! SS.isSeq(arg)) return Object.freeze([arg]);
-        return Object.freeze([...arg]);
-      },
-
-      isSeq: HH.isIterable,
-
-      identity(...args) {
-        SS.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
-        return args[0];
       },
     },
   ));
