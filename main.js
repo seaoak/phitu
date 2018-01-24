@@ -306,7 +306,7 @@
       },
 
       reduce(...args) {
-        SS.assert(args.length === 1 || args.length === 2, args);
+        SS.assert(args.length === 2, args); // disallow omitting "initialValue"
         SS.assert(SS.isCallable(args[0]), args);
         return SS.nativeArrayFuncProxy(
           'reduce',
@@ -316,7 +316,7 @@
       },
 
       reduceRight(...args) {
-        SS.assert(args.length === 1 || args.length === 2, args);
+        SS.assert(args.length === 2, args); // disallow omitting "initialValue"
         SS.assert(SS.isCallable(args[0]), args);
         return SS.nativeArrayFuncProxy(
           'reduceRight',
