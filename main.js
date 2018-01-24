@@ -91,6 +91,7 @@
       querySelectorAll(...args) {
         SS.assert(args.length === 1, args);
         const [query] = args;
+        SS.assert(typeof query === 'string' && query, args);
         return document.querySelectorAll(query);
       },
     },
