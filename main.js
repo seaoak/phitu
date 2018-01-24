@@ -208,12 +208,12 @@
     HH,
     {
       identity(...args) {
-        SS.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
+        SS.assert(args.length > 0); // allow to be called by Array.prototype.filter()
         return args[0];
       },
 
       not(...args) {
-        SS.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
+        SS.assert(args.length > 0); // allow to be called by Array.prototype.filter()
         return ! args[0];
       },
 
