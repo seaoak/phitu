@@ -212,6 +212,11 @@
         return args[0];
       },
 
+      not(...args) {
+        SS.assert(args.length > 0); // allow to be called by Array.prorotype.filter()
+        return ! args[0];
+      },
+
       partial(...args) {
         SS.assert(args.length > 1, args);
         const [func, ...restArgs] = args;
@@ -345,6 +350,44 @@
         SS.assert(SS.isCallable(args[0]), args);
         return SS.nativeArrayFuncProxy(
           'some',
+          (seq_, ret) => ret, // not freeze
+          args,
+        );
+      },
+
+      indexOf(...args) {
+        SS.assert(args.length === 1, args);
+        return SS.nativeArrayFuncProxy(
+          'indexOf',
+          (seq_, ret) => ret, // not freeze
+          args,
+        );
+      },
+
+      lastIndexOf(...args) {
+        SS.assert(args.length === 1, args);
+        return SS.nativeArrayFuncProxy(
+          'lastIndexOf',
+          (seq_, ret) => ret, // not freeze
+          args,
+        );
+      },
+
+      find(...args) {
+        SS.assert(args.length === 1, args);
+        SS.assert(SS.isCallable(args[0]), args);
+        return SS.nativeArrayFuncProxy(
+          'find',
+          (seq_, ret) => ret, // not freeze
+          args,
+        );
+      },
+
+      findIndex(...args) {
+        SS.assert(args.length === 1, args);
+        SS.assert(SS.isCallable(args[0]), args);
+        return SS.nativeArrayFuncProxy(
+          'findIndex',
           (seq_, ret) => ret, // not freeze
           args,
         );
@@ -580,6 +623,17 @@
   SS.debug(SS.last()(SS.toSeq(1,2,3)));
   SS.debug(SS.last()(SS.toSeq([1])));
   SS.debug(SS.last()(SS.toSeq([])));
+  console.debug('=================================================='); // eslint-disable-line
+  const list = SS.toSeq([11, 22, 33, null, 55, undefined, 66, undefined, 77, null]);
+  SS.debug(SS.filter(SS.not)(list));
+  SS.debug(SS.every(x => ! (x instanceof Object))(list));
+  SS.debug(SS.some(x => x instanceof Object)(list));
+  SS.debug(SS.indexOf(undefined)(list));
+  SS.debug(SS.lastIndexOf(undefined)(list));
+  SS.debug(SS.find(SS.not)(list));
+  SS.debug(SS.findIndex(SS.not)(list));
+  SS.debug(SS.nth(-4)(list));
+  SS.debug(SS.last()(list));
   console.debug('=================================================='); // eslint-disable-line
   const pairs = Object.freeze(['aaa', 1, 'bbb', 2, 'ccc', 3, 'ddd', 4, 'eee', 5]);
   SS.debug(SS.chunk()(pairs));
