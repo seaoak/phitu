@@ -185,7 +185,7 @@
       },
 
       applyThis(...args) {
-        SS.assert(args.length > 0);
+        SS.assert(args.length > 0); // allow appended arguments
         const [func, ...restArgs] = args;
         SS.assert(SS.isCallable(func), args);
         const that = this;
@@ -218,7 +218,7 @@
       },
 
       partial(...args) {
-        SS.assert(args.length > 1, args);
+        SS.assert(args.length > 0); // allow no prepended argument (just only used as lazy)
         const [func, ...restArgs] = args;
         SS.assert(SS.isCallable(func), args);
         return function partialHelper(...args) {
@@ -228,7 +228,7 @@
       },
 
       partialRight(...args) {
-        SS.assert(args.length > 1, args);
+        SS.assert(args.length > 0); // allow no appended argument (just only used as lazy)
         const [func, ...restArgs] = args;
         SS.assert(SS.isCallable(func), args);
         return function partialRightHelper(...args) {
@@ -264,7 +264,7 @@
       //----------------------------------------------------------------------
 
       tap(...args) {
-        SS.assert(args.length > 0);
+        SS.assert(args.length > 0); // allow appended arguments
         SS.assert(SS.isCallable(args[0]), args);
         return SS.nativeArrayFuncProxy(
           SS.applyThis,
@@ -275,32 +275,32 @@
       },
 
       forEach(...args) {
-        SS.assert(args.length === 1, args);
-        SS.assert(SS.isCallable(args[0]), args);
+        SS.assert(args.length > 0, args); // allow appended arguments
+        const func = SS.partialRight(...args);
         return SS.nativeArrayFuncProxy(
           'forEach',
           (seq, ret_) => seq,
-          args,
+          [func],
         );
       },
 
       filter(...args) {
-        SS.assert(args.length === 1, args);
-        SS.assert(SS.isCallable(args[0]), args);
+        SS.assert(args.length > 0, args); // allow appended arguments
+        const func = SS.partialRight(...args);
         return SS.nativeArrayFuncProxy(
           'filter',
           (seq_, ret) => Object.freeze(ret),
-          args,
+          [func],
         );
       },
 
       map(...args) {
-        SS.assert(args.length === 1, args);
-        SS.assert(SS.isCallable(args[0]), args);
+        SS.assert(args.length > 0, args); // allow appended arguments
+        const func = SS.partialRight(...args);
         return SS.nativeArrayFuncProxy(
           'map',
           (seq_, ret) => Object.freeze(ret),
-          args,
+          [func],
         );
       },
 
@@ -336,22 +336,22 @@
       },
 
       every(...args) {
-        SS.assert(args.length === 1, args);
-        SS.assert(SS.isCallable(args[0]), args);
+        SS.assert(args.length > 0, args); // allow appended arguments
+        const func = SS.partialRight(...args);
         return SS.nativeArrayFuncProxy(
           'every',
           (seq_, ret) => ret, // not freeze
-          args,
+          [func],
         );
       },
 
       some(...args) {
-        SS.assert(args.length === 1, args);
-        SS.assert(SS.isCallable(args[0]), args);
+        SS.assert(args.length > 0, args); // allow appended arguments
+        const func = SS.partialRight(...args);
         return SS.nativeArrayFuncProxy(
           'some',
           (seq_, ret) => ret, // not freeze
-          args,
+          [func],
         );
       },
 
@@ -374,22 +374,22 @@
       },
 
       find(...args) {
-        SS.assert(args.length === 1, args);
-        SS.assert(SS.isCallable(args[0]), args);
+        SS.assert(args.length > 0, args); // allow appended arguments
+        const func = SS.partialRight(...args);
         return SS.nativeArrayFuncProxy(
           'find',
           (seq_, ret) => ret, // not freeze
-          args,
+          [func],
         );
       },
 
       findIndex(...args) {
-        SS.assert(args.length === 1, args);
-        SS.assert(SS.isCallable(args[0]), args);
+        SS.assert(args.length > 0, args); // allow appended arguments
+        const func = SS.partialRight(...args);
         return SS.nativeArrayFuncProxy(
           'findIndex',
           (seq_, ret) => ret, // not freeze
-          args,
+          [func],
         );
       },
 
@@ -432,7 +432,7 @@
       //----------------------------------------------------------------------
 
       tapAssert(...args) {
-        SS.assert(args.length > 0);
+        SS.assert(args.length > 0); // allow appended arguments
         const [pred, ...restArgs] = args;
         SS.assert(SS.isCallable(pred), args);
         const stacktrace = [args, SS.saveStackTrace('SS.tapAssert():')];
@@ -440,7 +440,7 @@
       },
 
       assertEvery(...args) {
-        SS.assert(args.length > 0);
+        SS.assert(args.length > 0); // allow appended arguments
         const [pred, ...restArgs] = args;
         SS.assert(SS.isCallable(pred), args);
         const stacktrace = [args, SS.saveStackTrace('SS.assertEvery():')];
@@ -632,6 +632,7 @@
   SS.debug(SS.last()(SS.toSeq([])));
   console.debug('=================================================='); // eslint-disable-line
   const list = SS.toSeq([11, 22, 33, null, 55, undefined, 66, undefined, 77, null]);
+  SS.debug(SS.forEach(SS.log, 'foo', 'bar')(list));
   SS.debug(SS.filter(SS.not)(list));
   SS.debug(SS.every(x => ! (x instanceof Object))(list));
   SS.debug(SS.some(x => x instanceof Object)(list));
