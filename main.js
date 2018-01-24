@@ -33,7 +33,14 @@
 
       isCallable(...args) {
         const [arg] = args;
-        return arg && arg.call && arg.call.call && arg.apply && arg.apply.apply;
+        if (! SS.isDereferenceable(arg)) return false;
+        if (! SS.isDereferenceable(arg.call)) return false;
+        if (! SS.isDereferenceable(arg.apply)) return false;
+        if (arg.call !== arg.call.call) return false;
+        if (arg.call !== arg.apply.call) return false;
+        if (arg.apply !== arg.call.apply) return false;
+        if (arg.apply !== arg.apply.apply) return false;
+        return true;
       },
 
       isIterable(...args) {
