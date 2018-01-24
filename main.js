@@ -421,22 +421,12 @@
 
       last(...args) {
         SS.assert(args.length === 0, args);
-        return SS.nativeArrayFuncProxy(
-          SS.applyThis,
-          (seq_, ret) => ret, // not freeze
-          [seq => seq.length === 0 ? undefined : seq[seq.length - 1]],
-          'SS.last():',
-        );
+        return SS.nthOrElse(-1, undefined, 'SS.last():');
       },
 
       first(...args) {
         SS.assert(args.length === 0, args);
-        return SS.nativeArrayFuncProxy(
-          SS.applyThis,
-          (seq_, ret) => ret, // not freeze
-          [seq => seq.length === 0 ? undefined : seq[0]],
-          'SS.first():',
-        );
+        return SS.nthOrElse(0, undefined, 'SS.first():');
       },
 
       tail(...args) {
