@@ -485,6 +485,13 @@
     {},
     HH,
     {
+      imply(...args) {
+        SS.assert(args.length > 1, args);
+        const index = SS.findIndex(SS.not)(args); // must evaluate in order (left-to-right)
+        return index !== args.length - 1;
+      },
+    },
+    {
       querySelector(...args) {
         SS.assert(args.length === 1, args);
         const [query] = args;
@@ -640,6 +647,13 @@
   SS.debug(SS.chunk(2)(pairs));
   SS.debug(SS.chunk(3)(pairs));
   SS.debug(SS.seq2obj()(pairs));
+  console.debug('=================================================='); // eslint-disable-line
+  SS.debug(SS.imply(true, true));
+  SS.debug(SS.imply(true, undefined));
+  SS.debug(SS.imply(true, true, true, true, true, true));
+  SS.debug(SS.imply(true, true, true, true, true, undefined));
+  SS.debug(SS.imply(true, true, true, undefined, true, undefined));
+  SS.debug(SS.imply(undefined, true, true, true, true, undefined));
   console.debug('=================================================='); // eslint-disable-line
 
   function sasicaeMain() {
