@@ -409,15 +409,7 @@
         const [pos] = args;
         SS.assert(SS.isInteger(pos), args);
         const name = `SS.nth(${pos}):`;
-        const func1 = seq => ((seq.length < pos + 1) ? undefined : seq[pos]);
-        const func2 = seq => ((seq.length < -pos) ? undefined : seq[seq.length + pos]);
-        const func = pos >= 0 ? func1 : func2;
-        return SS.nativeArrayFuncProxy(
-          SS.applyThis,
-          (seq_, ret) => ret, // not freeze
-          [func],
-          name,
-        );
+        return SS.nthOrElse(pos, undefined, name);
       },
 
       last(...args) {
