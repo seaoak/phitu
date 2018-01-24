@@ -22,6 +22,15 @@
         return SS.isInteger(arg) && arg >= 0;
       },
 
+      isDereferenceable(...args) {
+        const [arg] = args;
+        if (arg === undefined) return false;
+        if (arg === null) return false;
+        if (typeof arg === 'boolean') return false;
+        if (typeof arg === 'number') return false;
+        return true;
+      },
+
       isCallable(...args) {
         const [arg] = args;
         return arg && arg.call && arg.call.call && arg.apply && arg.apply.apply;
