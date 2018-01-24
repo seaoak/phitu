@@ -650,6 +650,22 @@
 }).then(HH => {
   'use strict';
 
+  const excludes = HH.pipe(
+    Object.freeze,
+    HH.assertEvery(HH.isDereferenceable),
+    HH.assertEvery(HH.isCallable),
+    HH.map(x => x.name),
+    HH.assertEvery(name => typeof name === 'string'),
+    HH.assertEvery(name => name !== 'anonymous'),
+    HH.map(name => [name, true]),
+    HH.fromPairs(),
+  )([
+    HH.isIterable,
+    HH.saveStackTrace,
+    HH.nativeArrayFuncProxy,
+    HH.applyThis,
+  ]);
+
   // NOTE: Use the name space "SS" because of following reasons:
   //       - The underscore ("_") would not be suitable:
   //         * An single underscore ("_") is often used as a placeholder.
@@ -661,17 +677,12 @@
   //         * Prefixes "$" and "$$" are reserved by AngularJS.
   //       - A single alphabet letter is hard to search.
   //       - The letter "S" is initial letter of this software.
-  const SS = Object.freeze(Object.assign(
-    {},
-    HH,
-    {
-      assert: HH.assert,
-      error: HH.error,
-      debug: HH.debug,
-      log: HH.log,
-      warn: HH.warn,
-    },
-  ));
+  const SS = HH.pipe(
+    Object.entries,
+    HH.filter(([name, value_]) => ! excludes[name]),
+    HH.fromPairs(),
+    Object.freeze,
+  )(HH);
 
   console.debug('==========END_OF_SS=========='); // eslint-disable-line
 
@@ -773,6 +784,8 @@
   SS.debug(SS.imply(true, true, true, true, true, undefined));
   SS.debug(SS.imply(true, true, true, undefined, true, undefined));
   SS.debug(SS.imply(undefined, true, true, true, true, undefined));
+  console.debug('=================================================='); // eslint-disable-line
+  SS.debug('SS.isIterable:', SS.getOrElse(SS, 'isIterable', new Error('SS.isIterable() is not defined')));
   console.debug('=================================================='); // eslint-disable-line
 
   function sasicaeMain() {
