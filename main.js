@@ -454,6 +454,49 @@
 
       //----------------------------------------------------------------------
 
+      findOrElse(...args) {
+        SS.assert(args.length === 2, args); // no appended argument is allowed
+        const [pred, defaultValue] = args;
+        SS.assert(SS.isCallable(pred), args);
+        return SS.nativeArrayFuncProxy(
+          Array.prototype.findIndex,
+          (seq, ret) => ret === -1 ? defaultValue : seq[ret], // not freeze
+          [pred],
+          'SS.findOrElse():',
+        );
+      },
+
+      nthOrElse(...args) {
+        SS.assert(args.length === 2 || args.length === 3, args);
+        const [pos, defaultValue, nameOrUndef] = args;
+        SS.assert(SS.isInteger(pos), args);
+        SS.assert(args.length === 2 || (typeof nameOrUndef === 'string' && nameOrUndef), args);
+        const name = nameOrUndef || `SS.nthOrElse(${pos}):`;
+        const func1 = seq => ((seq.length < pos + 1) ? defaultValue : seq[pos]);
+        const func2 = seq => ((seq.length < -pos) ? defaultValue : seq[seq.length + pos]);
+        const func = pos >= 0 ? func1 : func2;
+        return SS.nativeArrayFuncProxy(
+          SS.applyThis,
+          (seq_, ret) => ret, // not freeze
+          [func],
+          name,
+        );
+      },
+
+      lastOrElse(...args) {
+        SS.assert(args.length === 1, args);
+        const [defaultValue] = args;
+        return SS.nthOrElse(-1, defaultValue, 'SS.lastOrElse():');
+      },
+
+      firstOrElse(...args) {
+        SS.assert(args.length === 1, args);
+        const [defaultValue] = args;
+        return SS.nthOrElse(0, defaultValue, 'SS.firstOrElse():');
+      },
+
+      //----------------------------------------------------------------------
+
       tapAssert(...args) {
         SS.assert(args.length > 0); // allow appended arguments
         const [pred, ...restArgs] = args;
@@ -667,6 +710,16 @@
   SS.debug(SS.last()(list));
   SS.debug(SS.first()(list));
   SS.debug(SS.tail()(list));
+  console.debug('=================================================='); // eslint-disable-line
+  SS.debug(SS.nth(99)(list));
+  SS.debug(SS.last()([]));
+  SS.debug(SS.first()([]));
+  SS.debug(SS.tail()([]));
+  SS.debug(SS.nthOrElse(99, 'aaa')(list));
+  SS.debug(SS.lastOrElse('bbb')([]));
+  SS.debug(SS.firstOrElse('ccc')([]));
+  SS.debug(SS.findOrElse(SS.not, 'ddd')(list));
+  SS.debug(SS.findOrElse(x => x instanceof Object, 'eee')(list));
   console.debug('=================================================='); // eslint-disable-line
   const pairs = Object.freeze(['aaa', 1, 'bbb', 2, 'ccc', 3, 'ddd', 4, 'eee', 5]);
   SS.debug(SS.chunk()(pairs));
