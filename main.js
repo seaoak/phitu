@@ -511,13 +511,29 @@
 
       //----------------------------------------------------------------------
 
-      fromPairs(...args) { // curried version of http://folktale.origamitower.com/api/v2.1.0/en/folktale.core.object.from-pairs.frompairs.html
-        SS.assert(args.length === 0, args);
+      setProperty(...args) {
+        SS.assert(args.length === 4, args);
+        const [obj, name, value, isOverridable] = args;
+        SS.assert(obj, args);
+        SS.assert(typeof name === 'string', args);
+        SS.assert(name, args);
+        if (Object.getOwnPropertyDescriptor(obj, name)) {
+          SS.warn(`SS.setProperty(): the property "${name}" already exists`, args);
+          if (! isOverridable) return null;
+        }
+        return Object.freeze(Object.defineProperty(Object.assign({}, obj), name, {value: value, enumerable: true}));
+      },
+
+      //----------------------------------------------------------------------
+
+      fromPairs(...args) {
+        SS.assert(args.length < 2, args);
+        const isOverridable = SS.firstOrElse(false)(args);
         const stacktrace = [args, SS.saveStackTrace('SS.fromPairs():')];
         return SS.pipe(
           SS.assertEvery(SS.isSeq, ...stacktrace),
           SS.assertEvery(x => x.length === 2, ...stacktrace),
-          SS.reduce((acc, [name, value]) => Object.defineProperty(acc, name, {value: value, enumerable: true}), {}),
+          SS.reduce((acc, [name, value]) => acc && SS.setProperty(acc, name, value, isOverridable), {}),
           Object.freeze,
         );
       },
@@ -672,6 +688,7 @@
       SS.tapDebug(),
       SS.assertEvery(x => typeof x.e.id === 'string' && x.e.id.length > 0),
       SS.map(x => [x.e.id, x.value]),
+      // seq => { const e = seq[3]; return [...seq, e] }, // this line makes the result "null", and finally causes "TypeError"
       SS.fromPairs(),
       Object.freeze,
     );
