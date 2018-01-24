@@ -577,7 +577,7 @@
         SS.assert(args.length === 1 || args.length === 2, args);
         SS.assertEvery(SS.identity)(args);
         const [table, keygen = SS.identity] = args;
-        SS.assert(table instanceof Object, args);
+        SS.assert(SS.isDereferenceable(table), args);
         SS.assert(SS.isCallable(keygen), args);
         const stacktrace = [args, SS.saveStackTrace('SS.indirectCall():')];
         return function indirectCallHelper(...args) {
