@@ -524,6 +524,27 @@
         return Object.freeze(Object.defineProperty(Object.assign({}, obj), name, {value: value, enumerable: true}));
       },
 
+      getOrElse(...args) {
+        // NOTE: Using numeric key for Object is not recommended.
+        //       If using it, explicit type-casting is required at the calling of this function.
+        SS.assert(args.length === 3, args);
+        const [obj, key, defaultValue] = args;
+        SS.assert(SS.isDereferenceable(obj), args);
+        if (typeof key === 'number') {
+          SS.assert(! isNaN(key) && isFinite(key), args);
+          SS.assert(SS.isNonNegativeInteger(key), args);
+          SS.assert(SS.isIterable(obj), args);
+          if (key > obj.length - 1) return defaultValue;
+          return obj[key];
+        }
+        SS.assert(SS.isDereferenceable(key), args);
+        const name = String(key);
+        SS.assert(name, args);
+        const status = Object.getOwnPropertyDescriptor(obj, name);
+        if (! status) return defaultValue;
+        return status.value;
+      },
+
       //----------------------------------------------------------------------
 
       fromPairs(...args) {
@@ -733,6 +754,12 @@
   SS.debug(SS.firstOrElse('ccc')([]));
   SS.debug(SS.findOrElse(SS.not, 'ddd')(list));
   SS.debug(SS.findOrElse(x => x instanceof Object, 'eee')(list));
+  console.debug('=================================================='); // eslint-disable-line
+  SS.debug(SS.getOrElse(list, 2, new Error('defaultValue of 2')));
+  SS.debug(SS.getOrElse(list, 99, new Error('defaultValue of 99')));
+  SS.debug(SS.getOrElse(list, '2', new Error('defaultValue of "2"')));
+  SS.debug(SS.getOrElse(list, 'length', new Error('defaultValue of "length"')));
+  SS.debug(SS.getOrElse(list, 'zzz', new Error('defaultValue of "zzz"')));
   console.debug('=================================================='); // eslint-disable-line
   const pairs = Object.freeze(['aaa', 1, 'bbb', 2, 'ccc', 3, 'ddd', 4, 'eee', 5]);
   SS.debug(SS.chunk()(pairs));
