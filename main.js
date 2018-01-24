@@ -429,6 +429,29 @@
         );
       },
 
+      first(...args) {
+        SS.assert(args.length === 0, args);
+        return SS.nativeArrayFuncProxy(
+          SS.applyThis,
+          (seq_, ret) => ret, // not freeze
+          [seq => seq.length === 0 ? undefined : seq[0]],
+          'SS.first():',
+        );
+      },
+
+      tail(...args) {
+        SS.assert(args.length === 0 || args.length === 1, args);
+        const [offsetOrUndef] = args;
+        SS.assert(args.length === 0 || SS.isNonNegativeInteger(offsetOrUndef), args); // allow 0
+        const offset = args.length === 0 ? 1 : offsetOrUndef;
+        return SS.nativeArrayFuncProxy(
+          Array.prototype.slice,
+          (seq_, ret) => Object.freeze(ret),
+          [offset],
+          'SS.tail():',
+        );
+      },
+
       //----------------------------------------------------------------------
 
       tapAssert(...args) {
@@ -642,6 +665,8 @@
   SS.debug(SS.findIndex(SS.not)(list));
   SS.debug(SS.nth(-4)(list));
   SS.debug(SS.last()(list));
+  SS.debug(SS.first()(list));
+  SS.debug(SS.tail()(list));
   console.debug('=================================================='); // eslint-disable-line
   const pairs = Object.freeze(['aaa', 1, 'bbb', 2, 'ccc', 3, 'ddd', 4, 'eee', 5]);
   SS.debug(SS.chunk()(pairs));
