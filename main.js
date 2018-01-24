@@ -432,9 +432,8 @@
 
       tail(...args) {
         SS.assert(args.length === 0 || args.length === 1, args);
-        const [offsetOrUndef] = args;
-        SS.assert(args.length === 0 || SS.isNonNegativeInteger(offsetOrUndef), args); // allow 0
-        const offset = args.length === 0 ? 1 : offsetOrUndef;
+        const offset = SS.firstOrElse(1)(args);
+        SS.assert(SS.isNonNegativeInteger(offset), args); // allow 0
         return SS.nativeArrayFuncProxy(
           Array.prototype.slice,
           (seq_, ret) => Object.freeze(ret),
