@@ -45,11 +45,9 @@
 
       isIterable(...args) {
         const [arg] = args;
-        try {
-          return arg && SS.isNonNegativeInteger(arg.length) && (arg[0], true);
-        } catch (e_) {
-          return false;
-        }
+        if (! SS.isDereferenceable(arg)) return false;
+        if (! SS.isNonNegativeInteger(arg.length)) return false;
+        return true;
       },
     },
   ));
