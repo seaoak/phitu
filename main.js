@@ -12,6 +12,11 @@
         return Number.isSafeInteger(arg);
       },
 
+      isSafeInteger(...args) {
+        const [arg] = args;
+        return Number.isSafeInteger(arg);
+      },
+
       isPositiveInteger(...args) {
         const [arg] = args;
         return SS.isInteger(arg) && arg > 0;
@@ -20,6 +25,14 @@
       isNonNegativeInteger(...args) {
         const [arg] = args;
         return SS.isInteger(arg) && arg >= 0;
+      },
+
+      isInt32(...args) {
+        // two's complement representation
+        const [arg] = args;
+        const width = 32;
+        const max = 2 ** (width - 1);
+        return SS.isInteger(arg) && -max <= arg && arg < max;
       },
 
       isDereferenceable(...args) {
@@ -206,6 +219,109 @@
         const that = this;
         SS.assert(that, args);
         return func(that, ...restArgs);
+      },
+    },
+    {
+      calculateXorShift128(...args) {
+        // This is a *pure* function
+        // https://ja.wikipedia.org/wiki/Xorshift
+        SS.assert(args.length < 2, args);
+        const [vec] = args;
+        if (args.length === 0 || vec === undefined) {
+          /* eslint-disable no-magic-numbers */
+          const x = 123456789;
+          const y = 362436069;
+          const z = 521288629;
+          const w = 88675123;
+          /* eslint-enable no-magic-numbers */
+          return SS.calculateXorShift128(Object.freeze([x, y, z, w]));
+        }
+        SS.assert(Array.isArray(vec), args);
+        SS.assert(vec.length === 4, args);
+        SS.assert(vec.every(SS.isInt32), args);
+        const [x, y, z, w] = vec;
+        /* eslint-disable no-magic-numbers, no-bitwise */
+        const t = x ^ (x << 11);
+        const x1 = y;
+        const y1 = z;
+        const z1 = w;
+        const w1 = (w ^ (w >>> 19)) ^ (t ^ (t >>> 8));
+        /* eslint-enable no-magic-numbers, no-bitwise */
+        return Object.freeze([w1, Object.freeze([x1, y1, z1, w1])]);
+      },
+
+      getRandomizerXorshift128(...args) {
+        // This is *NOT* a pure function
+        // https://ja.wikipedia.org/wiki/Xorshift
+        SS.assert(args.length === 0, args);
+        /* eslint-disable no-magic-numbers */
+        let x = 123456789;
+        let y = 362436069;
+        let z = 521288629;
+        let w = 88675123;
+        /* eslint-enable no-magic-numbers */
+        return (function* randomizerXorshift128(...args) {
+          SS.assert(args.length === 0, args);
+          for (;;) {
+            /* eslint-disable no-magic-numbers, no-bitwise */
+            const t = x ^ (x << 11);
+            x = y;
+            y = z;
+            z = w;
+            w = (w ^ (w >>> 19)) ^ (t ^ (t >>> 8));
+            /* eslint-enable no-magic-numbers, no-bitwise */
+            yield w;
+          }
+        })();
+      },
+
+      reduceToDecimalFraction(...args) {
+        // make a "[0,1)" decimal fraction from two 32bit signed integers
+        SS.assert(args.length === 2, args);
+        SS.assert(args.every(SS.isInt32), args);
+        const [x, y] = args;
+        const significantBits = 31;
+        const dropBits = 1 + significantBits - (Math.floor(Math.log2(Number.MAX_SAFE_INTEGER)) - significantBits); // 9 or 10
+        SS.assert(0 < dropBits && dropBits < significantBits);
+        /* eslint-disable no-bitwise */
+        const x1 = x >>> dropBits; // always non-negative number
+        const y1 = y >>> 1; // drop MSB (always non-negative number)
+        /* eslint-enable no-bitwise */
+        if (x1 + 1 === 2 ** (significantBits - dropBits) && y1 + 1 === 2 ** significantBits) return 0;
+        const z = x1 * (2 ** significantBits) + y1;
+        SS.assert(SS.isSafeInteger(z) && SS.isNonNegativeInteger(z), z, x1, y1, x, y, dropBits, args);
+        const result = z / Number.MAX_SAFE_INTEGER;
+        SS.assert(result >= 0 && result <= 1, result, z, x1, y1, args);
+        return result;
+      },
+
+      getRandomizer(...args) {
+        // Deterministic (replayable) pseudo-random number generator
+        // This is a *pure* function
+        SS.assert(args.length === 0, args);
+        const stacktrace = [SS.saveStackTrace('getRandomizer')];
+        const [_, vec] = SS.calculateXorShift128();
+        const randomizer = Object.freeze({
+          // Iterable-like Immutable object
+          next(...args) {
+            SS.assert(args.length === 0, args);
+            const that = this;
+            SS.assert(typeof that === 'object' && that && that.next === randomizer.next && Array.isArray(that.vec), that, stacktrace);
+            const [x, vec2] = SS.calculateXorShift128(that.vec);
+            const [y, vec3] = SS.calculateXorShift128(vec2);
+            const value = SS.reduceToDecimalFraction(x, y);
+            const result = Object.freeze({
+              next: randomizer.next,
+              value: value,
+              done: false,
+              vec: vec3,
+            });
+            return result;
+          },
+
+          vec: vec,
+        });
+        return randomizer.next();
       },
     },
   ));
@@ -664,6 +780,8 @@
     HH.saveStackTrace,
     HH.nativeArrayFuncProxy,
     HH.applyThis,
+    HH.calculateXorShift128,
+    HH.reduceToDecimalFraction,
   ]);
 
   // NOTE: Use the name space "SS" because of following reasons:
@@ -786,6 +904,23 @@
   SS.debug(SS.imply(undefined, true, true, true, true, undefined));
   console.debug('=================================================='); // eslint-disable-line
   SS.debug('SS.isIterable:', SS.getOrElse(SS, 'isIterable', new Error('SS.isIterable() is not defined')));
+  console.debug('=================================================='); // eslint-disable-line
+  SS.debug('Random:', SS.getRandomizer());
+  SS.debug('Random:', SS.getRandomizer());
+  SS.debug('Random:', SS.getRandomizer().next());
+  SS.debug('Random:', SS.getRandomizer().next());
+  SS.debug('Random:', SS.getRandomizer().next().next());
+  SS.debug('Random:', SS.getRandomizer().next().next());
+  SS.debug((() => {
+    const generator = SS.getRandomizerXorshift128();
+    return [
+      generator,
+      generator.next(),
+      generator.next(),
+      generator.next(),
+      generator.next().value,
+    ];
+  })());
   console.debug('=================================================='); // eslint-disable-line
 
   function sasicaeMain() {
