@@ -1,7 +1,8 @@
-# Sasicae
+# Phitu
 
 Realtime Markdown Viewer Engine with Wiki-like internal link based on Isomorphic JavaScript
 
+*This software is still working in progress (WIP)*
 
 ## Features
 
