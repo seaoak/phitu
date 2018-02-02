@@ -186,6 +186,32 @@
 }).then(HH => {
   'use strict';
 
+  // always enable "strict mode" of MobX
+  mobx.useStrict(true); // eslint-disable-line no-undef
+
+  // import from MobX
+  const SS = Object.freeze(Object.assign(
+    {},
+    HH,
+    {
+      observable: mobx.observable, // eslint-disable-line no-undef
+      computed: mobx.computed, // eslint-disable-line no-undef
+      autorun: mobx.autorun, // eslint-disable-line no-undef
+      action: mobx.action, // eslint-disable-line no-undef
+      runInAction: mobx.runInAction, // eslint-disable-line no-undef
+      when: mobx.when, // eslint-disable-line no-undef
+      autorunAsync: mobx.autorunAsync, // eslint-disable-line no-undef
+      reaction: mobx.reaction, // eslint-disable-line no-undef
+    },
+  ));
+
+  console.debug('==========END_OF_DEFINITION=========='); // eslint-disable-line
+
+  return Promise.resolve(SS); // explicitly create a new Promise object because the argument may have "then()" method
+
+}).then(HH => {
+  'use strict';
+
   // helper functions
   const SS = Object.freeze(Object.assign(
     {},
@@ -949,6 +975,41 @@
   const eee = ddd.chain(SS.identity);
   SS.log(eee);
   SS.log(eee.getOrElse('error detected'));
+  console.debug('=================================================='); // eslint-disable-line
+
+  (() => {
+    const state = SS.observable({
+      config: {
+        GlobalSwitch: false,
+        UrlHashSwitch: false,
+      },
+    });
+
+    SS.autorun(() => {
+      SS.debug('Mobx: autorun: config:', state.config);
+    });
+
+    SS.autorun(() => {
+      SS.debug('Mobx: autorun: GlobalSwitch:', state.config.GlobalSwitch);
+    });
+
+    SS.autorun(() => {
+      SS.debug('Mobx: autorun: UrlHashSwitch:', state.config.UrlHashSwitch);
+    });
+
+    const elem = SS.querySelector('#GlobalSwitch');
+    elem.addEventListener('change', SS.action(() => {
+      state.config.GlobalSwitch = elem.checked;
+      SS.debug('GlobalSwitch:', state.config.GlobalSwitch);
+    }));
+
+    const elem2 = SS.querySelector('#UrlHashSwitch');
+    elem2.addEventListener('change', () => {
+      state.config.UrlHashSwitch = elem2.checked;
+      SS.debug('UrlHashSwitch:', state.config.UrlHashSwitch);
+    });
+  })();
+  console.debug('=================================================='); // eslint-disable-line
 
   console.debug('==========END_OF_MAIN=========='); // eslint-disable-line
 });
