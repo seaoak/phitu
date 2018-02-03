@@ -978,13 +978,27 @@
   console.debug('=================================================='); // eslint-disable-line
 
   (() => {
+    function xor(...args) {
+      if (args.length === 1 && typeof args === 'object') {
+        const [arg] = args;
+        return xor(...Object.values(arg));
+      }
+      return args.reduce((acc, x) => acc === undefined ? Boolean(x) : Boolean(acc) !== Boolean(x), undefined);
+    }
+
     const state = SS.observable({
       config: {
         GlobalSwitch: false,
         CSSAssistSwitch: false,
         UrlHashSwitch: false,
       },
+
+      flagInner: SS.computed(() => xor(state.config)),
     });
+
+    const flagOuter = SS.computed(() => xor(state.config));
+
+    const counter = SS.computed(() => [...Object.values(state.config), state.flagInner, flagOuter.get()].reduce((acc, x) => acc + (x ? 1 : 0), 0));
 
     SS.autorun(() => {
       SS.log('Mobx: autorun: config:', state.config);
@@ -1000,6 +1014,22 @@
 
     SS.autorun(() => {
       SS.log('Mobx: autorun: UrlHashSwitch:', state.config.UrlHashSwitch);
+    });
+
+    SS.autorun(() => {
+      SS.log('Mobx: autorun: flagInner:', state.flagInner);
+    });
+
+    SS.autorun(() => {
+      SS.log('Mobx: autorun: flagOuter:', flagOuter.get());
+    });
+
+    SS.autorun(() => {
+      SS.log('Mobx: autorun: counter:', counter.get());
+    });
+
+    SS.autorun(() => {
+      SS.log('Mobx: autorun: flags:', state.flagInner, flagOuter.get(), counter.get());
     });
 
     const elem = SS.querySelector('#GlobalSwitch');
