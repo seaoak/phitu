@@ -994,6 +994,10 @@
       },
 
       flagInner: SS.computed(() => xor(state.config)),
+
+      get flagGetter() {
+        return Object.values(state.config).filter(SS.not).length;
+      },
     });
 
     const flagOuter = SS.computed(() => xor(state.config));
@@ -1027,11 +1031,15 @@
     });
 
     SS.autorun(() => {
+      SS.log('Mobx: autorun: flagGetter:', state.flagGetter);
+    });
+
+    SS.autorun(() => {
       SS.log('Mobx: autorun: count:', derivation.count);
     });
 
     SS.autorun(() => {
-      SS.log('Mobx: autorun: flags:', state.flagInner, flagOuter.get(), derivation.count);
+      SS.log('Mobx: autorun: flags:', state.flagInner, flagOuter.get(), state.flagGetter, derivation.count);
     });
 
     const elem = SS.querySelector('#GlobalSwitch');
