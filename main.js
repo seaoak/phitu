@@ -195,7 +195,7 @@
     HH,
     {
       observable: mobx.observable, // eslint-disable-line no-undef
-      computed: mobx.computed, // eslint-disable-line no-undef
+      // computed: mobx.computed, // eslint-disable-line no-undef
       autorun: mobx.autorun, // eslint-disable-line no-undef
       action: mobx.action, // eslint-disable-line no-undef
       runInAction: mobx.runInAction, // eslint-disable-line no-undef
@@ -993,17 +993,19 @@
         UrlHashSwitch: false,
       },
 
-      flagInner: SS.computed(() => xor(state.config)),
+      get flagInner() {
+        return xor(this.config);
+      },
 
       get flagGetter() {
         return Object.values(state.config).filter(SS.not).length;
       },
     });
 
-    const flagOuter = SS.computed(() => xor(state.config));
-
     const derivation = SS.observable({
-      count: SS.computed(() => [...Object.values(state.config), state.flagInner, flagOuter.get()].reduce((acc, x) => acc + (x ? 1 : 0), 0)),
+      get count() {
+        return [...Object.values(state.config), state.flagInner].reduce((acc, x) => acc + (x ? 1 : 0), 0);
+      },
     });
 
     SS.autorun(() => {
@@ -1027,10 +1029,6 @@
     });
 
     SS.autorun(() => {
-      SS.log('Mobx: autorun: flagOuter:', flagOuter.get());
-    });
-
-    SS.autorun(() => {
       SS.log('Mobx: autorun: flagGetter:', state.flagGetter);
     });
 
@@ -1039,7 +1037,7 @@
     });
 
     SS.autorun(() => {
-      SS.log('Mobx: autorun: flags:', state.flagInner, flagOuter.get(), state.flagGetter, derivation.count);
+      SS.log('Mobx: autorun: flags:', state.flagInner, state.flagGetter, derivation.count);
     });
 
     const elem = SS.querySelector('#GlobalSwitch');
