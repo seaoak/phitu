@@ -998,7 +998,9 @@
 
     const flagOuter = SS.computed(() => xor(state.config));
 
-    const counter = SS.computed(() => [...Object.values(state.config), state.flagInner, flagOuter.get()].reduce((acc, x) => acc + (x ? 1 : 0), 0));
+    const derivation = SS.observable({
+      count: SS.computed(() => [...Object.values(state.config), state.flagInner, flagOuter.get()].reduce((acc, x) => acc + (x ? 1 : 0), 0)),
+    });
 
     SS.autorun(() => {
       SS.log('Mobx: autorun: config:', state.config);
@@ -1025,11 +1027,11 @@
     });
 
     SS.autorun(() => {
-      SS.log('Mobx: autorun: counter:', counter.get());
+      SS.log('Mobx: autorun: count:', derivation.count);
     });
 
     SS.autorun(() => {
-      SS.log('Mobx: autorun: flags:', state.flagInner, flagOuter.get(), counter.get());
+      SS.log('Mobx: autorun: flags:', state.flagInner, flagOuter.get(), derivation.count);
     });
 
     const elem = SS.querySelector('#GlobalSwitch');
