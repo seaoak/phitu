@@ -981,6 +981,7 @@
     const state = SS.observable({
       config: {
         GlobalSwitch: false,
+        CSSAssistSwitch: false,
         UrlHashSwitch: false,
       },
     });
@@ -994,19 +995,74 @@
     });
 
     SS.autorun(() => {
+      SS.log('Mobx: autorun: CSSAssistSwitch:', state.config.CSSAssistSwitch);
+    });
+
+    SS.autorun(() => {
       SS.log('Mobx: autorun: UrlHashSwitch:', state.config.UrlHashSwitch);
     });
 
     const elem = SS.querySelector('#GlobalSwitch');
     elem.addEventListener('change', SS.action(() => {
+      SS.log('====================');
+      SS.log('onchange: GlobalSwitch: start:', elem.checked, state.config.GlobalSwitch);
+      Promise.resolve().then(() => SS.log('onchange: GlobalSwitch: resolved:', elem.checked, state.config.GlobalSwitch));
+      setTimeout(() => SS.log('onchange: GlobalSwitch: setTimeout(0):', elem.checked, state.config.GlobalSwitch), 0); // eslint-disable-line no-undef
+      setTimeout(() => SS.log('onchange: GlobalSwitch: setTimeout(1):', elem.checked, state.config.GlobalSwitch), 1); // eslint-disable-line no-undef
+      setTimeout(() => SS.log('onchange: GlobalSwitch: setTimeout(100):', elem.checked, state.config.GlobalSwitch), 100); // eslint-disable-line no-undef
       state.config.GlobalSwitch = elem.checked;
-      SS.log('GlobalSwitch:', state.config.GlobalSwitch);
+      SS.log('onchange: GlobalSwitch: intermediate1:', elem.checked, state.config.GlobalSwitch);
+      state.config.GlobalSwitch = ! elem.checked;
+      SS.log('onchange: GlobalSwitch: intermediate2:', elem.checked, state.config.GlobalSwitch);
+      state.config.GlobalSwitch = elem.checked;
+      SS.log('onchange: GlobalSwitch: end:', elem.checked, state.config.GlobalSwitch);
     }));
 
-    const elem2 = SS.querySelector('#UrlHashSwitch');
+    const elem2 = SS.querySelector('#CSSAssistSwitch');
     elem2.addEventListener('change', () => {
-      state.config.UrlHashSwitch = elem2.checked;
-      SS.log('UrlHashSwitch:', state.config.UrlHashSwitch);
+      SS.log('====================');
+      SS.log('onchange: CSSAssistSwitch: start:', elem2.checked, state.config.CSSAssistSwitch);
+      Promise.resolve().then(() => SS.log('onchange: CSSAssistSwitch: resolved:', elem2.checked, state.config.CSSAssistSwitch));
+      setTimeout(() => SS.log('onchange: CSSAssistSwitch: setTimeout(0):', elem2.checked, state.config.CSSAssistSwitch), 0); // eslint-disable-line no-undef
+      setTimeout(() => SS.log('onchange: CSSAssistSwitch: setTimeout(1):', elem2.checked, state.config.CSSAssistSwitch), 1); // eslint-disable-line no-undef
+      setTimeout(() => SS.log('onchange: CSSAssistSwitch: setTimeout(100):', elem2.checked, state.config.CSSAssistSwitch), 100); // eslint-disable-line no-undef
+      // state.config.CSSAssistSwitch = elem2.checked; // This line causes Error under "strict mode" of MobX
+      SS.runInAction(() => {
+        SS.log('onchange: CSSAssistSwitch: intermediate1:', elem2.checked, state.config.CSSAssistSwitch);
+        state.config.CSSAssistSwitch = elem2.checked;
+        SS.log('onchange: CSSAssistSwitch: intermediate2:', elem2.checked, state.config.CSSAssistSwitch);
+        state.config.CSSAssistSwitch = ! elem2.checked;
+        SS.log('onchange: CSSAssistSwitch: intermediate3:', elem2.checked, state.config.CSSAssistSwitch);
+        state.config.CSSAssistSwitch = elem2.checked;
+        SS.log('onchange: CSSAssistSwitch: intermediate4:', elem2.checked, state.config.CSSAssistSwitch);
+      });
+      SS.log('onchange: CSSAssistSwitch: end:', elem2.checked, state.config.CSSAssistSwitch);
+    });
+
+    const elem3 = SS.querySelector('#UrlHashSwitch');
+    elem3.addEventListener('change', () => {
+      SS.log('====================');
+      SS.log('onchange: UrlHashSwitch: start:', elem3.checked, state.config.UrlHashSwitch);
+      Promise.resolve().then(() => SS.log('onchange: UrlHashSwitch: resolved:', elem3.checked, state.config.UrlHashSwitch));
+      setTimeout(() => SS.log('onchange: UrlHashSwitch: setTimeout(0):', elem3.checked, state.config.UrlHashSwitch), 0); // eslint-disable-line no-undef
+      setTimeout(() => SS.log('onchange: UrlHashSwitch: setTimeout(1):', elem3.checked, state.config.UrlHashSwitch), 1); // eslint-disable-line no-undef
+      setTimeout(() => SS.log('onchange: UrlHashSwitch: setTimeout(100):', elem3.checked, state.config.UrlHashSwitch), 100); // eslint-disable-line no-undef
+      SS.runInAction(() => {
+        SS.log('onchange: UrlHashSwitch: intermediate1a:', elem3.checked, state.config.UrlHashSwitch);
+        state.config.UrlHashSwitch = elem3.checked;
+        SS.log('onchange: UrlHashSwitch: intermediate1b:', elem3.checked, state.config.UrlHashSwitch);
+      });
+      SS.runInAction(() => {
+        SS.log('onchange: UrlHashSwitch: intermediate2a:', elem3.checked, state.config.UrlHashSwitch);
+        state.config.UrlHashSwitch = ! elem3.checked;
+        SS.log('onchange: UrlHashSwitch: intermediate2b:', elem3.checked, state.config.UrlHashSwitch);
+      });
+      SS.runInAction(() => {
+        SS.log('onchange: UrlHashSwitch: intermediate3a:', elem3.checked, state.config.UrlHashSwitch);
+        state.config.UrlHashSwitch = elem3.checked;
+        SS.log('onchange: UrlHashSwitch: intermediate3b:', elem3.checked, state.config.UrlHashSwitch);
+      });
+      SS.log('onchange: UrlHashSwitch: end:', elem3.checked, state.config.UrlHashSwitch);
     });
   })();
   console.debug('=================================================='); // eslint-disable-line
