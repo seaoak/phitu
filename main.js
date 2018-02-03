@@ -1084,15 +1084,17 @@
         state.config.UrlHashSwitch = elem3.checked;
         SS.log('onchange: UrlHashSwitch: intermediate1b:', elem3.checked, state.config.UrlHashSwitch);
       });
-      SS.runInAction(() => {
-        SS.log('onchange: UrlHashSwitch: intermediate2a:', elem3.checked, state.config.UrlHashSwitch);
-        state.config.UrlHashSwitch = ! elem3.checked;
-        SS.log('onchange: UrlHashSwitch: intermediate2b:', elem3.checked, state.config.UrlHashSwitch);
-      });
+      SS.log('onchange: UrlHashSwitch: intermediate2:', elem3.checked, state.config.UrlHashSwitch);
       SS.runInAction(() => {
         SS.log('onchange: UrlHashSwitch: intermediate3a:', elem3.checked, state.config.UrlHashSwitch);
-        state.config.UrlHashSwitch = elem3.checked;
+        state.config.UrlHashSwitch = ! elem3.checked;
         SS.log('onchange: UrlHashSwitch: intermediate3b:', elem3.checked, state.config.UrlHashSwitch);
+      });
+      SS.log('onchange: UrlHashSwitch: intermediate4:', elem3.checked, state.config.UrlHashSwitch);
+      SS.runInAction(() => {
+        SS.log('onchange: UrlHashSwitch: intermediate5a:', elem3.checked, state.config.UrlHashSwitch);
+        state.config.UrlHashSwitch = elem3.checked;
+        SS.log('onchange: UrlHashSwitch: intermediate5b:', elem3.checked, state.config.UrlHashSwitch);
       });
       SS.log('onchange: UrlHashSwitch: end:', elem3.checked, state.config.UrlHashSwitch);
     });
