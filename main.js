@@ -871,73 +871,73 @@
   }
 
   const config = generateFormReader()(SS.querySelector('#GlobalNavigation').childNodes);
-  SS.debug(config);
-  SS.debug(config.GlobalSwitch);
+  SS.log(config);
+  SS.log(config.GlobalSwitch);
   console.debug('=================================================='); // eslint-disable-line
 
   /* eslint-disable no-magic-numbers */
   /* eslint-disable comma-spacing */
 
-  SS.debug(SS.toSeq(1,2,3));
-  SS.debug(SS.toSeq([1,2,3]));
-  SS.debug(SS.toSeq([1,2,3], [4,5,6], [7,8,9]));
+  SS.log(SS.toSeq(1,2,3));
+  SS.log(SS.toSeq([1,2,3]));
+  SS.log(SS.toSeq([1,2,3], [4,5,6], [7,8,9]));
   console.debug('=================================================='); // eslint-disable-line
-  SS.debug(SS.last()(SS.toSeq(1,2,3)));
-  SS.debug(SS.last()(SS.toSeq([1])));
-  SS.debug(SS.last()(SS.toSeq([])));
+  SS.log(SS.last()(SS.toSeq(1,2,3)));
+  SS.log(SS.last()(SS.toSeq([1])));
+  SS.log(SS.last()(SS.toSeq([])));
   console.debug('=================================================='); // eslint-disable-line
   const list = SS.toSeq([11, 22, 33, null, 55, undefined, 66, undefined, 77, null]);
-  SS.debug(SS.forEach(SS.log, 'foo', 'bar')(list));
-  SS.debug(SS.filter(SS.not)(list));
-  SS.debug(SS.every(x => ! (x instanceof Object))(list));
-  SS.debug(SS.some(x => x instanceof Object)(list));
-  SS.debug(SS.indexOf(undefined)(list));
-  SS.debug(SS.lastIndexOf(undefined)(list));
-  SS.debug(SS.find(SS.not)(list));
-  SS.debug(SS.findIndex(SS.not)(list));
-  SS.debug(SS.nth(-4)(list));
-  SS.debug(SS.last()(list));
-  SS.debug(SS.first()(list));
-  SS.debug(SS.tail()(list));
+  SS.log(SS.forEach(SS.log, 'foo', 'bar')(list));
+  SS.log(SS.filter(SS.not)(list));
+  SS.log(SS.every(x => ! (x instanceof Object))(list));
+  SS.log(SS.some(x => x instanceof Object)(list));
+  SS.log(SS.indexOf(undefined)(list));
+  SS.log(SS.lastIndexOf(undefined)(list));
+  SS.log(SS.find(SS.not)(list));
+  SS.log(SS.findIndex(SS.not)(list));
+  SS.log(SS.nth(-4)(list));
+  SS.log(SS.last()(list));
+  SS.log(SS.first()(list));
+  SS.log(SS.tail()(list));
   console.debug('=================================================='); // eslint-disable-line
-  SS.debug(SS.nth(99)(list));
-  SS.debug(SS.last()([]));
-  SS.debug(SS.first()([]));
-  SS.debug(SS.tail()([]));
-  SS.debug(SS.nthOrElse(99, 'aaa')(list));
-  SS.debug(SS.lastOrElse('bbb')([]));
-  SS.debug(SS.firstOrElse('ccc')([]));
-  SS.debug(SS.findOrElse(SS.not, 'ddd')(list));
-  SS.debug(SS.findOrElse(x => x instanceof Object, 'eee')(list));
+  SS.log(SS.nth(99)(list));
+  SS.log(SS.last()([]));
+  SS.log(SS.first()([]));
+  SS.log(SS.tail()([]));
+  SS.log(SS.nthOrElse(99, 'aaa')(list));
+  SS.log(SS.lastOrElse('bbb')([]));
+  SS.log(SS.firstOrElse('ccc')([]));
+  SS.log(SS.findOrElse(SS.not, 'ddd')(list));
+  SS.log(SS.findOrElse(x => x instanceof Object, 'eee')(list));
   console.debug('=================================================='); // eslint-disable-line
-  SS.debug(SS.getOrElse(list, 2, new Error('defaultValue of 2')));
-  SS.debug(SS.getOrElse(list, 99, new Error('defaultValue of 99')));
-  SS.debug(SS.getOrElse(list, '2', new Error('defaultValue of "2"')));
-  SS.debug(SS.getOrElse(list, 'length', new Error('defaultValue of "length"')));
-  SS.debug(SS.getOrElse(list, 'zzz', new Error('defaultValue of "zzz"')));
+  SS.log(SS.getOrElse(list, 2, new Error('defaultValue of 2')));
+  SS.log(SS.getOrElse(list, 99, new Error('defaultValue of 99')));
+  SS.log(SS.getOrElse(list, '2', new Error('defaultValue of "2"')));
+  SS.log(SS.getOrElse(list, 'length', new Error('defaultValue of "length"')));
+  SS.log(SS.getOrElse(list, 'zzz', new Error('defaultValue of "zzz"')));
   console.debug('=================================================='); // eslint-disable-line
   const pairs = Object.freeze(['aaa', 1, 'bbb', 2, 'ccc', 3, 'ddd', 4, 'eee', 5]);
-  SS.debug(SS.chunk()(pairs));
-  SS.debug(SS.chunk(2)(pairs));
-  SS.debug(SS.chunk(3)(pairs));
-  SS.debug(SS.seq2obj()(pairs));
+  SS.log(SS.chunk()(pairs));
+  SS.log(SS.chunk(2)(pairs));
+  SS.log(SS.chunk(3)(pairs));
+  SS.log(SS.seq2obj()(pairs));
   console.debug('=================================================='); // eslint-disable-line
-  SS.debug(SS.imply(true, true));
-  SS.debug(SS.imply(true, undefined));
-  SS.debug(SS.imply(true, true, true, true, true, true));
-  SS.debug(SS.imply(true, true, true, true, true, undefined));
-  SS.debug(SS.imply(true, true, true, undefined, true, undefined));
-  SS.debug(SS.imply(undefined, true, true, true, true, undefined));
+  SS.log(SS.imply(true, true));
+  SS.log(SS.imply(true, undefined));
+  SS.log(SS.imply(true, true, true, true, true, true));
+  SS.log(SS.imply(true, true, true, true, true, undefined));
+  SS.log(SS.imply(true, true, true, undefined, true, undefined));
+  SS.log(SS.imply(undefined, true, true, true, true, undefined));
   console.debug('=================================================='); // eslint-disable-line
-  SS.debug('SS.isIterable:', SS.getOrElse(SS, 'isIterable', new Error('SS.isIterable() is not defined')));
+  SS.log('SS.isIterable:', SS.getOrElse(SS, 'isIterable', new Error('SS.isIterable() is not defined')));
   console.debug('=================================================='); // eslint-disable-line
-  SS.debug('Random:', SS.getRandomizer());
-  SS.debug('Random:', SS.getRandomizer());
-  SS.debug('Random:', SS.getRandomizer().next());
-  SS.debug('Random:', SS.getRandomizer().next());
-  SS.debug('Random:', SS.getRandomizer().next().next());
-  SS.debug('Random:', SS.getRandomizer().next().next());
-  SS.debug((() => {
+  SS.log('Random:', SS.getRandomizer());
+  SS.log('Random:', SS.getRandomizer());
+  SS.log('Random:', SS.getRandomizer().next());
+  SS.log('Random:', SS.getRandomizer().next());
+  SS.log('Random:', SS.getRandomizer().next().next());
+  SS.log('Random:', SS.getRandomizer().next().next());
+  SS.log((() => {
     const generator = SS.getRandomizerXorshift128();
     return [
       generator,
@@ -986,27 +986,27 @@
     });
 
     SS.autorun(() => {
-      SS.debug('Mobx: autorun: config:', state.config);
+      SS.log('Mobx: autorun: config:', state.config);
     });
 
     SS.autorun(() => {
-      SS.debug('Mobx: autorun: GlobalSwitch:', state.config.GlobalSwitch);
+      SS.log('Mobx: autorun: GlobalSwitch:', state.config.GlobalSwitch);
     });
 
     SS.autorun(() => {
-      SS.debug('Mobx: autorun: UrlHashSwitch:', state.config.UrlHashSwitch);
+      SS.log('Mobx: autorun: UrlHashSwitch:', state.config.UrlHashSwitch);
     });
 
     const elem = SS.querySelector('#GlobalSwitch');
     elem.addEventListener('change', SS.action(() => {
       state.config.GlobalSwitch = elem.checked;
-      SS.debug('GlobalSwitch:', state.config.GlobalSwitch);
+      SS.log('GlobalSwitch:', state.config.GlobalSwitch);
     }));
 
     const elem2 = SS.querySelector('#UrlHashSwitch');
     elem2.addEventListener('change', () => {
       state.config.UrlHashSwitch = elem2.checked;
-      SS.debug('UrlHashSwitch:', state.config.UrlHashSwitch);
+      SS.log('UrlHashSwitch:', state.config.UrlHashSwitch);
     });
   })();
   console.debug('=================================================='); // eslint-disable-line
