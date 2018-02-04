@@ -1051,6 +1051,26 @@
       },
     });
 
+    const invariant = SS.observable({
+      get neverEveryTrue() {
+        SS.log('invariant: evaluated: neverEveryTrue');
+        return Object.values(state.config).some(SS.not);
+      },
+    });
+
+    const loggerWithState = (...args) => () => {
+      SS.warn('loggerWithState: evaluated:', ...args);
+      return [...args, SS.toJS(state)];
+    };
+
+    SS.keys(invariant).forEach(name => {
+      const logger = loggerWithState(name);
+      SS.autorun(() => {
+        SS.log('Mobx: autorun: invariant:', name);
+        SS.assertLazy(() => invariant[name], logger)();
+      });
+    });
+
     SS.autorun(() => {
       SS.log('Mobx: autorun: config:', state.config);
     });
