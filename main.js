@@ -1056,6 +1056,11 @@
         SS.log('invariant: evaluated: neverEveryTrue');
         return Object.values(state.config).some(SS.not);
       },
+
+      get neverBeUndefined() {
+        SS.log('invariant: evaluated: neverBeUndefined');
+        return state.config.GlobalSwitch !== undefined;
+      },
     });
 
     const loggerWithState = (...args) => () => {
