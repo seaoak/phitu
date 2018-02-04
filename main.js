@@ -131,6 +131,19 @@
     {
       // Others
 
+      assertLazy(...args) {
+        // 2nd argument "logger" is lazily evaluated
+        console.assert(args.length === 2, args);
+        const [pred, logger] = args;
+        console.assert(SS.isCallable(pred), args);
+        console.assert(SS.isCallable(logger), args);
+        const stacktrace = [SS.saveStackTrace('SS.assertLazy():')];
+        return function assertLazyHelper(...args) {
+          const cond = pred(...args);
+          if (! cond) SS.assert(cond, ...args, ...logger(...args), ...stacktrace);
+        };
+      },
+
       saveStackTrace(...args) {
         SS.assert(args.length < 3, args);
         if (args.length === 0) return new Error();
