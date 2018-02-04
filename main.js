@@ -63,6 +63,12 @@
         return true;
       },
     },
+    {
+      toJS(...args) {
+        const [arg] = args;
+        return arg;
+      },
+    },
   ));
 
   console.debug('==========END_OF_DEFINITION=========='); // eslint-disable-line
@@ -202,6 +208,16 @@
       when: mobx.when, // eslint-disable-line no-undef
       autorunAsync: mobx.autorunAsync, // eslint-disable-line no-undef
       reaction: mobx.reaction, // eslint-disable-line no-undef
+    },
+    {
+      toJS(...args) { // overwrite
+        SS.assert(args.length === 1, args);
+        const [target] = args;
+        SS.assert(typeof target === 'object', args);
+        SS.assert(target, args);
+        if (mobx.isObservable(target)) return mobx.toJS(target); // eslint-disable-line no-undef
+        return HH.toJS(target);
+      },
     },
   ));
 
