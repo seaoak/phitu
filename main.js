@@ -1100,7 +1100,7 @@
       },
 
       get flagGetter() {
-        return Object.values(state.config).filter(SS.not).length;
+        return Object.values(this.config).filter(SS.not).length;
       },
     });
 
