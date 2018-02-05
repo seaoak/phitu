@@ -196,6 +196,37 @@
     {},
     HH,
     {
+      identity(...args) {
+        SS.assert(args.length > 0); // allow to be called by Array.prototype.filter()
+        return args[0];
+      },
+
+      not(...args) {
+        SS.assert(args.length > 0); // allow to be called by Array.prototype.filter()
+        return ! args[0];
+      },
+
+      partial(...args) {
+        SS.assert(args.length > 0); // allow no prepended argument (just only used as lazy)
+        const [func, ...restArgs] = args;
+        SS.assert(SS.isCallable(func), args);
+        return function partialHelper(...args) {
+          SS.assert(args.length >= 0); // allow no appended argument (just only used as lazy)
+          return func(...restArgs, ...args);
+        };
+      },
+
+      partialRight(...args) {
+        SS.assert(args.length > 0); // allow no appended argument (just only used as lazy)
+        const [func, ...restArgs] = args;
+        SS.assert(SS.isCallable(func), args);
+        return function partialRightHelper(...args) {
+          SS.assert(args.length >= 0); // allow no prepended argument (just only used as lazy)
+          return func(...args, ...restArgs);
+        };
+      },
+    },
+    {
       nativeArrayFuncProxy(...args) {
         SS.assert(args.length === 3 || args.length === 4, args);
         const [nativeFuncOrName, selectResult, baseArgs, nameOrUndef] = args;
@@ -414,38 +445,6 @@
     {},
     HH,
     {
-      identity(...args) {
-        SS.assert(args.length > 0); // allow to be called by Array.prototype.filter()
-        return args[0];
-      },
-
-      not(...args) {
-        SS.assert(args.length > 0); // allow to be called by Array.prototype.filter()
-        return ! args[0];
-      },
-
-      partial(...args) {
-        SS.assert(args.length > 0); // allow no prepended argument (just only used as lazy)
-        const [func, ...restArgs] = args;
-        SS.assert(SS.isCallable(func), args);
-        return function partialHelper(...args) {
-          SS.assert(args.length >= 0); // allow no appended argument (just only used as lazy)
-          return func(...restArgs, ...args);
-        };
-      },
-
-      partialRight(...args) {
-        SS.assert(args.length > 0); // allow no appended argument (just only used as lazy)
-        const [func, ...restArgs] = args;
-        SS.assert(SS.isCallable(func), args);
-        return function partialRightHelper(...args) {
-          SS.assert(args.length >= 0); // allow no prepended argument (just only used as lazy)
-          return func(...args, ...restArgs);
-        };
-      },
-
-      //----------------------------------------------------------------------
-
       isSeq: HH.isIterable,
 
       toSeq(...args) { // flatten
