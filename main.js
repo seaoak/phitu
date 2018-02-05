@@ -41,6 +41,7 @@
         if (arg === null) return false;
         if (typeof arg === 'boolean') return false;
         if (typeof arg === 'number') return false;
+        if (typeof arg === 'symbol') return false;
         return true;
       },
 
