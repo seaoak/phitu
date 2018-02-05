@@ -245,6 +245,40 @@
       },
     },
     {
+      setProperty(...args) {
+        SS.assert(args.length === 4, args);
+        const [obj, name, value, isOverridable] = args;
+        SS.assert(obj, args);
+        SS.assert(typeof name === 'string', args);
+        SS.assert(name, args);
+        if (Object.getOwnPropertyDescriptor(obj, name)) {
+          SS.warn(`SS.setProperty(): the property "${name}" already exists`, args);
+          if (! isOverridable) return null;
+        }
+        return Object.freeze(Object.defineProperty(Object.assign({}, obj), name, {value: value, enumerable: true}));
+      },
+
+      getOrElse(...args) {
+        // NOTE: Using numeric key for Object is not recommended.
+        //       If using it, explicit type-casting is required at the calling of this function.
+        SS.assert(args.length === 3, args);
+        const [obj, key, defaultValue] = args;
+        SS.assert(SS.isDereferenceable(obj), args);
+        if (typeof key === 'number') {
+          SS.assert(! isNaN(key) && isFinite(key), args);
+          SS.assert(SS.isNonNegativeInteger(key), args);
+          SS.assert(SS.isIterable(obj), args);
+          if (key > obj.length - 1) return defaultValue;
+          return obj[key];
+        }
+        SS.assert(SS.isDereferenceable(key), args);
+        const name = String(key);
+        SS.assert(name, args);
+        const status = Object.getOwnPropertyDescriptor(obj, name);
+        if (! status) return defaultValue;
+        return status.value;
+      },
+
       keys(...args) {
         SS.assert(args.length === 1, args);
         const [obj] = args;
@@ -751,42 +785,6 @@
         SS.assert(SS.isCallable(pred), args);
         const stacktrace = [args, SS.saveStackTrace('SS.assertEvery():')];
         return SS.forEach((e, i, arr) => SS.assert(pred(e), e, i, arr, ...restArgs, ...stacktrace));
-      },
-
-      //----------------------------------------------------------------------
-
-      setProperty(...args) {
-        SS.assert(args.length === 4, args);
-        const [obj, name, value, isOverridable] = args;
-        SS.assert(obj, args);
-        SS.assert(typeof name === 'string', args);
-        SS.assert(name, args);
-        if (Object.getOwnPropertyDescriptor(obj, name)) {
-          SS.warn(`SS.setProperty(): the property "${name}" already exists`, args);
-          if (! isOverridable) return null;
-        }
-        return Object.freeze(Object.defineProperty(Object.assign({}, obj), name, {value: value, enumerable: true}));
-      },
-
-      getOrElse(...args) {
-        // NOTE: Using numeric key for Object is not recommended.
-        //       If using it, explicit type-casting is required at the calling of this function.
-        SS.assert(args.length === 3, args);
-        const [obj, key, defaultValue] = args;
-        SS.assert(SS.isDereferenceable(obj), args);
-        if (typeof key === 'number') {
-          SS.assert(! isNaN(key) && isFinite(key), args);
-          SS.assert(SS.isNonNegativeInteger(key), args);
-          SS.assert(SS.isIterable(obj), args);
-          if (key > obj.length - 1) return defaultValue;
-          return obj[key];
-        }
-        SS.assert(SS.isDereferenceable(key), args);
-        const name = String(key);
-        SS.assert(name, args);
-        const status = Object.getOwnPropertyDescriptor(obj, name);
-        if (! status) return defaultValue;
-        return status.value;
       },
 
       //----------------------------------------------------------------------
