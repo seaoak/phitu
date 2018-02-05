@@ -45,6 +45,17 @@
         return true;
       },
 
+      isObjectLike(...args) {
+        const [arg] = args;
+        if (! SS.isDereferenceable(arg)) return false;
+        if (typeof arg === 'string') return false;
+        if (Array.isArray(arg)) return true;
+        if (typeof arg === 'object' && arg instanceof Object) return true;
+        if (typeof arg === 'object') return true; // allow the object created by "Object.create(null)"
+        if (typeof arg === 'function') return true; // different from "Lodash.isObjectLike()"
+        return true; // allow "Host object (provided by the JavaScript environment)"
+      },
+
       isCallable(...args) {
         const [arg] = args;
         return typeof arg === 'function';
