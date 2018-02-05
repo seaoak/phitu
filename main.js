@@ -231,7 +231,7 @@
         SS.assert(typeof target === 'object', args);
         SS.assert(target, args);
         if (MM.isObservable(target)) return MM.toJS(target);
-        return HH.toJS(target);
+        return HH.toJS(target); // delegate
       },
     },
   ));
