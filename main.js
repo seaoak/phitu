@@ -192,6 +192,18 @@
         return ! args[0];
       },
 
+      truthy() {
+        return true;
+      },
+
+      falsy() {
+        return false;
+      },
+
+      noop() {
+        // do nothing
+      },
+
       partial(...args) {
         SS.assert(args.length > 0); // allow no prepended argument (just only used as lazy)
         const [func, ...restArgs] = args;
