@@ -157,6 +157,20 @@
         return Object.freeze([...seq, err]);
       },
 
+      keys(...args) {
+        SS.assert(args.length === 1, args);
+        const [obj] = args;
+        SS.assert(typeof obj === 'object', args);
+        SS.assert(obj, args);
+        const filters = Object.freeze([
+          // should return one of true/false/undefined ("undefined" means "leave it to next")
+          x => ! x.includes('$') && undefined,
+          _ => true, // sentinel
+        ]);
+        const isAcceptable = x => filters.reduce((acc, pred) => acc === undefined ? pred(x) : acc, undefined);
+        return Object.freeze(Object.getOwnPropertyNames(obj).filter(isAcceptable));
+      },
+
       getPromiseForOnLoad(...args) {
         SS.assert(args.length === 1, args);
         const [arg] = args;
@@ -716,20 +730,6 @@
         const status = Object.getOwnPropertyDescriptor(obj, name);
         if (! status) return defaultValue;
         return status.value;
-      },
-
-      keys(...args) {
-        SS.assert(args.length === 1, args);
-        const [obj] = args;
-        SS.assert(typeof obj === 'object', args);
-        SS.assert(obj, args);
-        const filters = Object.freeze([
-          // should return one of true/false/undefined ("undefined" means "leave it to next")
-          x => ! x.includes('$') && undefined,
-          _ => true, // sentinel
-        ]);
-        const isAcceptable = x => filters.reduce((acc, pred) => acc === undefined ? pred(x) : acc, undefined);
-        return Object.freeze(Object.getOwnPropertyNames(obj).filter(isAcceptable));
       },
 
       //----------------------------------------------------------------------
