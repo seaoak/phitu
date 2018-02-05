@@ -211,6 +211,26 @@
           return func(...args, ...restArgs);
         };
       },
+
+      applyRecursively(...args) {
+        SS.assert(args.length === 1 || args.length === 2, args);
+        const [func, predOrUndef] = args;
+        SS.assert(SS.isCallable(func), args);
+        const pred = args.length === 2 ? predOrUndef : SS.truthy;
+        SS.assert(SS.isCallable(pred), args);
+        const stacktrace = [args, SS.saveStackTrace('applyRecursively():')];
+        return function applyRecursivelyHelper(...args) {
+          SS.assert(args.length > 0, args, stacktrace); // allow to be called by Array.prototype.forEach()
+          const [obj] = args;
+          if (! pred(obj)) return obj;
+          if (SS.isObjectLike(obj)) {
+            SS.warn('applyRecursivelyHelper():', 'keys:', SS.keys(obj));
+            SS.values(obj).forEach(SS.applyRecursively(func, pred));
+          }
+          SS.warn('applyRecursively():', 'apply:', obj);
+          return func(obj);
+        };
+      },
     },
     {
       keys(...args) {
@@ -225,6 +245,26 @@
         ]);
         const isAcceptable = x => filters.reduce((acc, pred) => acc === undefined ? pred(x) : acc, undefined);
         return Object.freeze(Object.getOwnPropertyNames(obj).filter(isAcceptable));
+      },
+
+      values(...args) {
+        SS.assert(args.length === 1, args);
+        const [obj] = args;
+        const keys = SS.keys(obj);
+        const result = Array.prototype.map.call(keys, x => obj[x]);
+        return Object.freeze(result);
+      },
+
+      sealDeep(...args) {
+        SS.assert(args.length === 1, args);
+        const [arg] = args;
+        return SS.applyRecursively(Object.seal, SS.isObjectLike)(arg);
+      },
+
+      freezeDeep(...args) {
+        SS.assert(args.length === 1, args);
+        const [arg] = args;
+        return SS.applyRecursively(Object.freeze, SS.isObjectLike)(arg);
       },
     },
     {
