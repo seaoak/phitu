@@ -191,77 +191,6 @@
 }).then(HH => {
   'use strict';
 
-  // import from folktale
-  const SS = Object.freeze(Object.assign(
-    {},
-    HH,
-    // folktale.core.lambda, // eslint-disable-line no-undef
-    // folktale.fantasyLand, // eslint-disable-line no-undef
-    {
-      Maybe: folktale.maybe, // eslint-disable-line no-undef
-      Result: folktale.result, // eslint-disable-line no-undef
-      Validation: folktale.validation, // eslint-disable-line no-undef
-      Union: folktale.adt.union, // eslint-disable-line no-undef
-    },
-    {
-      isMonad(m) {
-        if (SS.Result && SS.isCallable(SS.Result.hasInstance) && SS.Result.hasInstance(m)) return true;
-        if (SS.Maybe && SS.isCallable(SS.Maybe.hasInstance) && SS.Maybe.hasInstance(m)) return true;
-        return false;
-      },
-
-      chainOrCall(m, f) {
-        SS.assert(SS.isCallable(f), m, f);
-        return SS.isMonad(m) ? m.chain(f) : f(m);
-      },
-    },
-  ));
-
-  console.debug('==========END_OF_DEFINITION=========='); // eslint-disable-line
-
-  return Promise.resolve(SS); // explicitly create a new Promise object because the argument may have "then()" method
-
-}).then(HH => {
-  'use strict';
-
-  const MM = mobx; // eslint-disable-line no-undef
-
-  // always enable "strict mode" of MobX
-  MM.useStrict(true);
-
-  // import from MobX
-  const SS = Object.freeze(Object.assign(
-    {},
-    HH,
-    {
-      observable: MM.observable,
-      // computed: MM.computed,
-      autorun: MM.autorun,
-      action: MM.action,
-      runInAction: MM.runInAction,
-      when: MM.when,
-      autorunAsync: MM.autorunAsync,
-      reaction: MM.reaction,
-    },
-    {
-      toJS(...args) { // overwrite
-        SS.assert(args.length === 1, args);
-        const [target] = args;
-        SS.assert(typeof target === 'object', args);
-        SS.assert(target, args);
-        if (MM.isObservable(target)) return MM.toJS(target);
-        return HH.toJS(target); // delegate
-      },
-    },
-  ));
-
-  console.debug('==========END_OF_DEFINITION=========='); // eslint-disable-line
-
-  return Promise.resolve(SS); // explicitly create a new Promise object because the argument may have "then()" method
-
-}).then(HH => {
-  'use strict';
-
   // helper functions
   const SS = Object.freeze(Object.assign(
     {},
@@ -398,6 +327,77 @@
           vec: vec,
         });
         return randomizer.next();
+      },
+    },
+  ));
+
+  console.debug('==========END_OF_DEFINITION=========='); // eslint-disable-line
+
+  return Promise.resolve(SS); // explicitly create a new Promise object because the argument may have "then()" method
+
+}).then(HH => {
+  'use strict';
+
+  // import from folktale
+  const SS = Object.freeze(Object.assign(
+    {},
+    HH,
+    // folktale.core.lambda, // eslint-disable-line no-undef
+    // folktale.fantasyLand, // eslint-disable-line no-undef
+    {
+      Maybe: folktale.maybe, // eslint-disable-line no-undef
+      Result: folktale.result, // eslint-disable-line no-undef
+      Validation: folktale.validation, // eslint-disable-line no-undef
+      Union: folktale.adt.union, // eslint-disable-line no-undef
+    },
+    {
+      isMonad(m) {
+        if (SS.Result && SS.isCallable(SS.Result.hasInstance) && SS.Result.hasInstance(m)) return true;
+        if (SS.Maybe && SS.isCallable(SS.Maybe.hasInstance) && SS.Maybe.hasInstance(m)) return true;
+        return false;
+      },
+
+      chainOrCall(m, f) {
+        SS.assert(SS.isCallable(f), m, f);
+        return SS.isMonad(m) ? m.chain(f) : f(m);
+      },
+    },
+  ));
+
+  console.debug('==========END_OF_DEFINITION=========='); // eslint-disable-line
+
+  return Promise.resolve(SS); // explicitly create a new Promise object because the argument may have "then()" method
+
+}).then(HH => {
+  'use strict';
+
+  const MM = mobx; // eslint-disable-line no-undef
+
+  // always enable "strict mode" of MobX
+  MM.useStrict(true);
+
+  // import from MobX
+  const SS = Object.freeze(Object.assign(
+    {},
+    HH,
+    {
+      observable: MM.observable,
+      // computed: MM.computed,
+      autorun: MM.autorun,
+      action: MM.action,
+      runInAction: MM.runInAction,
+      when: MM.when,
+      autorunAsync: MM.autorunAsync,
+      reaction: MM.reaction,
+    },
+    {
+      toJS(...args) { // overwrite
+        SS.assert(args.length === 1, args);
+        const [target] = args;
+        SS.assert(typeof target === 'object', args);
+        SS.assert(target, args);
+        if (MM.isObservable(target)) return MM.toJS(target);
+        return HH.toJS(target); // delegate
       },
     },
   ));
