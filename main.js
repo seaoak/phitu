@@ -499,7 +499,6 @@
     {},
     HH,
     {
-      observable: MM.observable,
       // computed: MM.computed,
       autorun: MM.autorun,
       action: MM.action,
@@ -507,6 +506,11 @@
       when: MM.when,
       autorunAsync: MM.autorunAsync,
       reaction: MM.reaction,
+    },
+    {
+      observable(...args) {
+        return SS.sealDeep(MM.observable(...args));
+      },
     },
     {
       toJS(...args) { // overwrite
