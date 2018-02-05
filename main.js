@@ -205,22 +205,24 @@
 }).then(HH => {
   'use strict';
 
+  const MM = mobx; // eslint-disable-line no-undef
+
   // always enable "strict mode" of MobX
-  mobx.useStrict(true); // eslint-disable-line no-undef
+  MM.useStrict(true);
 
   // import from MobX
   const SS = Object.freeze(Object.assign(
     {},
     HH,
     {
-      observable: mobx.observable, // eslint-disable-line no-undef
-      // computed: mobx.computed, // eslint-disable-line no-undef
-      autorun: mobx.autorun, // eslint-disable-line no-undef
-      action: mobx.action, // eslint-disable-line no-undef
-      runInAction: mobx.runInAction, // eslint-disable-line no-undef
-      when: mobx.when, // eslint-disable-line no-undef
-      autorunAsync: mobx.autorunAsync, // eslint-disable-line no-undef
-      reaction: mobx.reaction, // eslint-disable-line no-undef
+      observable: MM.observable,
+      // computed: MM.computed,
+      autorun: MM.autorun,
+      action: MM.action,
+      runInAction: MM.runInAction,
+      when: MM.when,
+      autorunAsync: MM.autorunAsync,
+      reaction: MM.reaction,
     },
     {
       toJS(...args) { // overwrite
@@ -228,7 +230,7 @@
         const [target] = args;
         SS.assert(typeof target === 'object', args);
         SS.assert(target, args);
-        if (mobx.isObservable(target)) return mobx.toJS(target); // eslint-disable-line no-undef
+        if (MM.isObservable(target)) return MM.toJS(target);
         return HH.toJS(target);
       },
     },
