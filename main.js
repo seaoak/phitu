@@ -47,14 +47,7 @@
 
       isCallable(...args) {
         const [arg] = args;
-        if (! SS.isDereferenceable(arg)) return false;
-        if (! SS.isDereferenceable(arg.call)) return false;
-        if (! SS.isDereferenceable(arg.apply)) return false;
-        if (arg.call !== arg.call.call) return false;
-        if (arg.call !== arg.apply.call) return false;
-        if (arg.apply !== arg.call.apply) return false;
-        if (arg.apply !== arg.apply.apply) return false;
-        return true;
+        return typeof arg === 'function';
       },
 
       isIterable(...args) {
