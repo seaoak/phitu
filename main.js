@@ -232,7 +232,7 @@
         SS.assert(SS.isCallable(pred), args);
         const stacktrace = [args, SS.saveStackTrace('applyRecursively():')];
         return function applyRecursivelyHelper(...args) {
-          SS.assert(args.length > 0, args, stacktrace); // allow to be called by Array.prototype.forEach()
+          SS.assert(args.length > 0, args, ...stacktrace); // allow to be called by Array.prototype.forEach()
           const [obj] = args;
           if (! pred(obj)) return obj;
           if (SS.isObjectLike(obj)) {
@@ -422,14 +422,14 @@
         // Deterministic (replayable) pseudo-random number generator
         // This is a *pure* function
         SS.assert(args.length === 0, args);
-        const stacktrace = [SS.saveStackTrace('getRandomizer')];
+        const stacktrace = [SS.saveStackTrace('getRandomizer():')];
         const [_, vec] = SS.calculateXorShift128();
         const randomizer = Object.freeze({
           // Iterable-like Immutable object
           next(...args) {
             SS.assert(args.length === 0, args);
             const that = this;
-            SS.assert(typeof that === 'object' && that && that.next === randomizer.next && Array.isArray(that.vec), that, stacktrace);
+            SS.assert(typeof that === 'object' && that && that.next === randomizer.next && Array.isArray(that.vec), that, ...stacktrace);
             const [x, vec2] = SS.calculateXorShift128(that.vec);
             const [y, vec3] = SS.calculateXorShift128(vec2);
             const value = SS.reduceToDecimalFraction(x, y);
