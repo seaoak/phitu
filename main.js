@@ -350,36 +350,39 @@
     },
     {
       getDisposerManager(...args) {
-        SS.assert(args.length === 0, args);
-        return Object.freeze({
-          list: [],
+        SS.assert(args.length === 1, args);
+        const [name] = args;
+        SS.assert(name && typeof name === 'string', args);
+        const list = [];
+        const manager = Object.freeze({
+          toString: () => name,
+
+          name: name,
 
           add(...args) {
             SS.assert(args.length === 1, args);
             const [disposer] = args;
             SS.isCallable(disposer, args);
-            const that = this;
-            const index = that.list.length;
+            const index = list.length;
             const stacktrace = [args, SS.saveStackTrace('SS.disposerHelper():')];
             const disposerHelper = (...args) => {
               SS.assert(args.length === 0, args, ...stacktrace);
-              SS.assert(that.list[index], that, index, ...stacktrace); // error if called twice
-              that.list[index] = null;
+              SS.assert(list[index], manager, index, ...stacktrace); // error if called twice
+              list[index] = null;
               return disposer();
             };
-            that.list.push(disposerHelper);
+            list.push(disposerHelper);
             return disposerHelper;
           },
 
           cleanup(...args) {
             SS.assert(args.length === 0, args);
-            const that = this;
-            SS.warn(that.list);
-            const count = that.list.filter(SS.identity).map(f => f()).length;
-            SS.warn('SS.disposers.cleanup:', count);
-            SS.assert(that.list.every(SS.not), that.list);
+            const count = list.filter(SS.identity).map(f => f()).length;
+            SS.warn('SS.disposers:', `"${name}":`, 'cleanup:', count);
+            SS.assert(list.every(SS.not), list);
           },
         });
+        return manager;
       },
     },
     {
@@ -529,7 +532,7 @@
 
   const MM = mobx; // eslint-disable-line no-undef
 
-  const disposers = HH.getDisposerManager();
+  const disposers = HH.getDisposerManager('disposers for MobX');
 
   // always enable "strict mode" of MobX
   MM.useStrict(true);
