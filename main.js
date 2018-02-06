@@ -86,7 +86,7 @@
   const {document} = window; // eslint-disable-line no-undef
   const {console} = window; // eslint-disable-line no-undef
   const {HTMLElement} = window; // eslint-disable-line no-undef
-  const onload = handler => window.addEventListener('load', () => handler()); // eslint-disable-line no-undef
+  const onload = handler => window.addEventListener('load', () => handler()); // eslint-disable-line no-undef, no-restricted-properties
 
   // platform-dependent helper functions
   const SS = Object.freeze(Object.assign(
@@ -150,8 +150,8 @@
         if (elem instanceof HTMLElement) {
           if (elem.nodeName === 'INPUT' || elem.nodeName === 'SELECT') {
             SS.assert(name === 'change', args);
-            elem.addEventListener(name, handler);
-            manager.add(() => elem.removeEventListener(name, handler));
+            elem.addEventListener(name, handler); // eslint-disable-line no-restricted-properties
+            manager.add(() => elem.removeEventListener(name, handler)); // eslint-disable-line no-restricted-properties
             return manager;
           }
           SS.fatal('SS.on():', 'unknown nodeName:', elem.nodeName, args);
