@@ -345,6 +345,40 @@
       },
     },
     {
+      getDisposerManager(...args) {
+        SS.assert(args.length === 0, args);
+        return Object.freeze({
+          list: [],
+
+          add(...args) {
+            SS.assert(args.length === 1, args);
+            const [disposer] = args;
+            SS.isCallable(disposer, args);
+            const that = this;
+            const index = that.list.length;
+            const stacktrace = [args, SS.saveStackTrace('SS.disposerHelper():')];
+            const disposerHelper = (...args) => {
+              SS.assert(args.length === 0, args, ...stacktrace);
+              SS.assert(that.list[index], that, index, ...stacktrace); // error if called twice
+              that.list[index] = null;
+              return disposer();
+            };
+            that.list.push(disposerHelper);
+            return disposerHelper;
+          },
+
+          cleanup(...args) {
+            SS.assert(args.length === 0, args);
+            const that = this;
+            SS.warn(that.list);
+            const count = that.list.filter(SS.identity).map(f => f()).length;
+            SS.warn('SS.disposers.cleanup:', count);
+            SS.assert(that.list.every(SS.not), that.list);
+          },
+        });
+      },
+    },
+    {
       calculateXorShift128(...args) {
         // This is a *pure* function
         // https://ja.wikipedia.org/wiki/Xorshift
@@ -491,34 +525,7 @@
 
   const MM = mobx; // eslint-disable-line no-undef
 
-  const disposers = Object.freeze({
-    list: [],
-
-    add(...args) {
-      HH.assert(args.length === 1, args);
-      const [disposer] = args;
-      HH.isCallable(disposer, args);
-      const that = this;
-      const index = that.list.length;
-      const stacktrace = [args, HH.saveStackTrace('SS.disposerHelper():')];
-      const disposerHelper = (...args) => {
-        HH.assert(args.length === 0, args, ...stacktrace);
-        HH.assert(that.list[index], that, index, ...stacktrace); // error if called twice
-        that.list[index] = null;
-        return disposer();
-      };
-      that.list.push(disposerHelper);
-      return disposerHelper;
-    },
-
-    cleanup(...args) {
-      HH.assert(args.length === 0, args);
-      const that = this;
-      const count = that.list.filter(HH.identity).map(f => f()).length;
-      HH.warn('SS.disposers.cleanup:', count);
-      HH.assert(that.list.every(HH.not), that.list);
-    },
-  });
+  const disposers = HH.getDisposerManager();
 
   // always enable "strict mode" of MobX
   MM.useStrict(true);
