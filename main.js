@@ -274,6 +274,24 @@
       },
     },
     {
+      inRange(...args) {
+        SS.assert(args.length === 1 || args.length === 2, args);
+        const start = args.length === 1 ? 0 : Math.min(...args); // inclusive
+        const end = Math.max(...args); // exclusive
+        SS.assert(! isNaN(start) && ! isNaN(end), args);
+        SS.assert(start < end, args);
+        const stacktrace = [args, SS.saveStackTrace('SS.inRange():')];
+        return function inRangeHelper(...args) {
+          SS.assert(args.length === 1, args, ...stacktrace);
+          const [arg] = args;
+          const value = Number(arg);
+          SS.assert(! isNaN(value), args, ...stacktrace);
+          SS.assert(isFinite(value), args, ...stacktrace);
+          return start <= value && value < end;
+        };
+      },
+    },
+    {
       setProperty(...args) {
         SS.assert(args.length === 4, args);
         const [obj, name, value, isOverridable] = args;
