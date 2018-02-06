@@ -491,6 +491,35 @@
 
   const MM = mobx; // eslint-disable-line no-undef
 
+  const disposers = Object.freeze({
+    list: [],
+
+    add(...args) {
+      HH.assert(args.length === 1, args);
+      const [disposer] = args;
+      HH.isCallable(disposer, args);
+      const that = this;
+      const index = that.list.length;
+      const stacktrace = [args, HH.saveStackTrace('SS.disposerHelper():')];
+      const disposerHelper = (...args) => {
+        HH.assert(args.length === 0, args, ...stacktrace);
+        HH.assert(that.list[index], that, index, ...stacktrace); // error if called twice
+        that.list[index] = null;
+        return disposer();
+      };
+      that.list.push(disposerHelper);
+      return disposerHelper;
+    },
+
+    cleanup(...args) {
+      HH.assert(args.length === 0, args);
+      const that = this;
+      const count = that.list.filter(HH.identity).map(f => f()).length;
+      HH.warn('SS.disposers.cleanup:', count);
+      HH.assert(that.list.every(HH.not), that.list);
+    },
+  });
+
   // always enable "strict mode" of MobX
   MM.useStrict(true);
 
@@ -500,16 +529,34 @@
     HH,
     {
       // computed: MM.computed,
-      autorun: MM.autorun,
       action: MM.action,
       runInAction: MM.runInAction,
-      when: MM.when,
-      autorunAsync: MM.autorunAsync,
-      reaction: MM.reaction,
     },
     {
       observable(...args) {
         return SS.sealDeep(MM.observable(...args));
+      },
+    },
+    {
+      autorun(...args) {
+        return disposers.add(MM.autorun(...args));
+      },
+
+      autorunAsync(...args) {
+        return disposers.add(MM.autorunAsync(...args));
+      },
+
+      reaction(...args) {
+        return disposers.add(MM.reaction(...args));
+      },
+
+      when(...args) {
+        return disposers.add(MM.when(...args));
+      },
+    },
+    {
+      disposerAll(...args) {
+        return disposers.cleanup(...args);
       },
     },
     {
@@ -1203,6 +1250,7 @@
         state.config.CSSAssistSwitch = elem2.checked;
         SS.log('onchange: CSSAssistSwitch: intermediate4:', elem2.checked, state.config.CSSAssistSwitch);
       });
+      if (SS.querySelector('#IntervalSelect').value === '60sec') SS.disposerAll();
       SS.log('onchange: CSSAssistSwitch: end:', elem2.checked, state.config.CSSAssistSwitch);
     });
 
