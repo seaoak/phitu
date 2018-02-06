@@ -267,10 +267,8 @@
           const [obj] = args;
           if (! pred(obj)) return obj;
           if (SS.isObjectLike(obj)) {
-            SS.warn('applyRecursivelyHelper():', 'keys:', SS.keys(obj));
             SS.values(obj).forEach(SS.applyRecursively(func, pred));
           }
-          SS.warn('applyRecursively():', 'apply:', obj);
           return func(obj);
         };
       },
