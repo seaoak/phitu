@@ -1269,7 +1269,7 @@
       SS.log('Mobx: autorun: count:', derivation.count);
     });
 
-    SS.autorun(() => {
+    const disposer2 = SS.autorun(() => {
       SS.log('Mobx: autorun: flags:', state.flagInner, state.flagGetter, derivation.count);
     });
 
@@ -1311,6 +1311,7 @@
       });
       if (SS.querySelector('#IntervalSelect').value === '60sec') SS.disposerAll();
       if (SS.querySelector('#IntervalSelect').value === '1sec') disposers.cleanup();
+      if (SS.querySelector('#IntervalSelect').value === '30sec') SS.warn('disposer2:', disposer2());
       SS.log('onchange: CSSAssistSwitch: end:', elem2.checked, state.config.CSSAssistSwitch);
     }, disposers);
 
