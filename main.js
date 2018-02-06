@@ -85,6 +85,7 @@
 
   const {document} = window; // eslint-disable-line no-undef
   const {console} = window; // eslint-disable-line no-undef
+  const {HTMLElement} = window; // eslint-disable-line no-undef
   const onload = handler => window.addEventListener('load', () => handler()); // eslint-disable-line no-undef
 
   // platform-dependent helper functions
@@ -131,6 +132,32 @@
         const [query] = args;
         SS.assert(typeof query === 'string' && query, args);
         return document.querySelectorAll(query);
+      },
+
+      on(...args) {
+        SS.assert(args.length === 4, args);
+        const [elemOrArrayOrQuery, name, handler, manager] = args;
+        if (Array.isArray(elemOrArrayOrQuery)) {
+          return elemOrArrayOrQuery.reduce((acc, e) => SS.on(e, name, handler, acc), manager);
+        }
+        if (typeof elemOrArrayOrQuery === 'string') {
+          return [...SS.querySelectorAll(elemOrArrayOrQuery)].reduce((acc, e) => SS.on(e, name, handler, acc), manager);
+        }
+        const elem = elemOrArrayOrQuery;
+        SS.assert(name && typeof name === 'string', args);
+        SS.assert(SS.isCallable(handler), args);
+        SS.assert(manager, args);
+        if (elem instanceof HTMLElement) {
+          if (elem.nodeName === 'INPUT' || elem.nodeName === 'SELECT') {
+            SS.assert(name === 'change', args);
+            elem.addEventListener(name, handler);
+            manager.add(() => elem.removeEventListener(name, handler));
+            return manager;
+          }
+          SS.fatal('SS.on():', 'unknown nodeName:', elem.nodeName, args);
+        }
+        SS.fatal('SS.on():', 'unknown target:', elem, args);
+        return undefined; // never reach
       },
     },
     {
@@ -1230,8 +1257,10 @@
       SS.log('Mobx: autorun: flags:', state.flagInner, state.flagGetter, derivation.count);
     });
 
+    const disposers = SS.getDisposerManager('onchange of INPUT elements');
+
     const elem = SS.querySelector('#GlobalSwitch');
-    elem.addEventListener('change', SS.action(() => {
+    SS.on(elem, 'change', SS.action(() => {
       SS.log('====================');
       SS.log('onchange: GlobalSwitch: start:', elem.checked, state.config.GlobalSwitch);
       Promise.resolve().then(() => SS.log('onchange: GlobalSwitch: resolved:', elem.checked, state.config.GlobalSwitch));
@@ -1244,10 +1273,10 @@
       SS.log('onchange: GlobalSwitch: intermediate2:', elem.checked, state.config.GlobalSwitch);
       state.config.GlobalSwitch = elem.checked;
       SS.log('onchange: GlobalSwitch: end:', elem.checked, state.config.GlobalSwitch);
-    }));
+    }), disposers);
 
     const elem2 = SS.querySelector('#CSSAssistSwitch');
-    elem2.addEventListener('change', () => {
+    SS.on(elem2, 'change', () => {
       SS.log('====================');
       SS.log('onchange: CSSAssistSwitch: start:', elem2.checked, state.config.CSSAssistSwitch);
       Promise.resolve().then(() => SS.log('onchange: CSSAssistSwitch: resolved:', elem2.checked, state.config.CSSAssistSwitch));
@@ -1265,11 +1294,12 @@
         SS.log('onchange: CSSAssistSwitch: intermediate4:', elem2.checked, state.config.CSSAssistSwitch);
       });
       if (SS.querySelector('#IntervalSelect').value === '60sec') SS.disposerAll();
+      if (SS.querySelector('#IntervalSelect').value === '1sec') disposers.cleanup();
       SS.log('onchange: CSSAssistSwitch: end:', elem2.checked, state.config.CSSAssistSwitch);
-    });
+    }, disposers);
 
     const elem3 = SS.querySelector('#UrlHashSwitch');
-    elem3.addEventListener('change', () => {
+    SS.on(elem3, 'change', () => {
       SS.log('====================');
       SS.log('onchange: UrlHashSwitch: start:', elem3.checked, state.config.UrlHashSwitch);
       Promise.resolve().then(() => SS.log('onchange: UrlHashSwitch: resolved:', elem3.checked, state.config.UrlHashSwitch));
@@ -1294,7 +1324,7 @@
         SS.log('onchange: UrlHashSwitch: intermediate5b:', elem3.checked, state.config.UrlHashSwitch);
       });
       SS.log('onchange: UrlHashSwitch: end:', elem3.checked, state.config.UrlHashSwitch);
-    });
+    }, disposers);
   })();
   console.debug('=================================================='); // eslint-disable-line
 
