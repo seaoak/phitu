@@ -136,6 +136,10 @@
     {
       // Others
 
+      fatal(...args) {
+        throw new Error('SS.fatal():', ...args);
+      },
+
       assertLazy(...args) {
         // 2nd argument "logger" is lazily evaluated
         console.assert(args.length === 2, args);
