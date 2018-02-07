@@ -86,7 +86,7 @@
   const {document} = window; // eslint-disable-line no-undef
   const {console} = window; // eslint-disable-line no-undef
   const {HTMLElement} = window; // eslint-disable-line no-undef
-  const onload = handler => window.addEventListener('load', () => handler()); // eslint-disable-line no-undef, no-restricted-properties
+  const onload = handler => document.addEventListener('DOMContentLoaded', () => handler()); // eslint-disable-line no-restricted-properties
 
   // platform-dependent helper functions
   const SS = Object.freeze(Object.assign(
