@@ -478,7 +478,11 @@ rules:
     - error
   no-plusplus:
     - off
-  # no-restricted-syntax:
+  no-restricted-syntax:
+    # NOTE: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Parser_API
+    # NOTE: https://github.com/estree/estree
+    - error
+    - 'VariableDeclaration[kind="let"]'
   no-tabs:
     - error
   no-ternary:

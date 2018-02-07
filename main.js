@@ -461,12 +461,12 @@
         // This is *NOT* a pure function
         // https://ja.wikipedia.org/wiki/Xorshift
         SS.assert(args.length === 0, args);
-        /* eslint-disable no-magic-numbers */
+        /* eslint-disable no-magic-numbers, no-restricted-syntax */
         let x = 123456789;
         let y = 362436069;
         let z = 521288629;
         let w = 88675123;
-        /* eslint-enable no-magic-numbers */
+        /* eslint-enable no-magic-numbers, no-restricted-syntax */
         return (function* randomizerXorshift128(...args) {
           SS.assert(args.length === 0, args);
           for (;;) {
@@ -1161,9 +1161,11 @@
     const replacement = SS.querySelector('#Replacement').innerHTML;
     const target = SS.querySelector('#TargetParagraph');
     const original = target.innerHTML;
-    let isReplaced = false;
+    const state = Object.seal({
+      isReplaced: false,
+    });
     setInterval(() => { // eslint-disable-line no-undef
-      target.innerHTML = (isReplaced = ! isReplaced) ? replacement : original;
+      target.innerHTML = (state.isReplaced = ! state.isReplaced) ? replacement : original;
     }, 5000);
   }
 
