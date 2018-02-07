@@ -134,7 +134,29 @@
         return document.querySelectorAll(query);
       },
 
+      getEventListnerArguments(...args) {
+        // NOTE: see [Improving scrolling performance with passive listeners](https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md)
+        SS.assert(args.length === 2, args);
+        const [handler, useCapture] = args;
+        SS.assert(SS.isCallable(handler), args);
+        SS.assert(typeof useCapture === 'boolean', args); // strictly checked because of its importance
+        const opts = Object.freeze({
+          capture: useCapture,
+          once: false,
+          passive: ! useCapture, // if true, "event.preventDefault()" is prohibited
+        });
+        const helper = event => {
+          const that = this;
+          const obj = Object.assign({}, event);
+          if (opts.passive) delete obj.preventDefault;
+          Object.freeze(obj);
+          handler.call(that, obj);
+        };
+        return [helper, opts];
+      },
+
       on(...args) {
+        // NOTE: Multiple calling with same handler causes duplicated calling (not compatible with native "addEventListener()")
         SS.assert(args.length === 4, args);
         const [elemOrArrayOrQuery, name, handler, disposers] = args;
         if (Array.isArray(elemOrArrayOrQuery)) {
@@ -150,8 +172,9 @@
         if (elem instanceof HTMLElement) {
           if (elem.nodeName === 'INPUT' || elem.nodeName === 'SELECT') {
             SS.assert(name === 'change', args);
-            elem.addEventListener(name, handler); // eslint-disable-line no-restricted-properties
-            disposers.add(() => elem.removeEventListener(name, handler)); // eslint-disable-line no-restricted-properties
+            const [helper, opts] = SS.getEventListnerArguments(handler, false);
+            elem.addEventListener(name, helper, opts); // eslint-disable-line no-restricted-properties
+            disposers.add(() => elem.removeEventListener(name, helper)); // eslint-disable-line no-restricted-properties
             return disposers;
           }
           SS.fatal('SS.on():', 'unknown nodeName:', elem.nodeName, args);
