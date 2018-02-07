@@ -483,6 +483,9 @@ rules:
     # NOTE: https://github.com/estree/estree
     - error
     - 'VariableDeclaration[kind="let"]'
+    - 'ForStatement[init!=null]'
+    - 'ForStatement[test!=null]'
+    - 'ForStatement[update!=null]'
   no-tabs:
     - error
   no-ternary:
