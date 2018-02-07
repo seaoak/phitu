@@ -486,6 +486,9 @@ rules:
     - 'ForStatement[init!=null]'
     - 'ForStatement[test!=null]'
     - 'ForStatement[update!=null]'
+    - 'ForInStatement'
+    - 'WhileStatement'
+    - 'DoWhileStatement'
   no-tabs:
     - error
   no-ternary:
