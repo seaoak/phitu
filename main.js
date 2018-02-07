@@ -136,23 +136,23 @@
 
       on(...args) {
         SS.assert(args.length === 4, args);
-        const [elemOrArrayOrQuery, name, handler, manager] = args;
+        const [elemOrArrayOrQuery, name, handler, disposers] = args;
         if (Array.isArray(elemOrArrayOrQuery)) {
-          return elemOrArrayOrQuery.reduce((acc, e) => SS.on(e, name, handler, acc), manager);
+          return elemOrArrayOrQuery.reduce((acc, e) => SS.on(e, name, handler, acc), disposers);
         }
         if (typeof elemOrArrayOrQuery === 'string') {
-          return [...SS.querySelectorAll(elemOrArrayOrQuery)].reduce((acc, e) => SS.on(e, name, handler, acc), manager);
+          return [...SS.querySelectorAll(elemOrArrayOrQuery)].reduce((acc, e) => SS.on(e, name, handler, acc), disposers);
         }
         const elem = elemOrArrayOrQuery;
         SS.assert(name && typeof name === 'string', args);
         SS.assert(SS.isCallable(handler), args);
-        SS.assert(manager, args);
+        SS.assert(disposers, args);
         if (elem instanceof HTMLElement) {
           if (elem.nodeName === 'INPUT' || elem.nodeName === 'SELECT') {
             SS.assert(name === 'change', args);
             elem.addEventListener(name, handler); // eslint-disable-line no-restricted-properties
-            manager.add(() => elem.removeEventListener(name, handler)); // eslint-disable-line no-restricted-properties
-            return manager;
+            disposers.add(() => elem.removeEventListener(name, handler)); // eslint-disable-line no-restricted-properties
+            return disposers;
           }
           SS.fatal('SS.on():', 'unknown nodeName:', elem.nodeName, args);
         }
