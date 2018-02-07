@@ -420,6 +420,33 @@
         const [name] = args;
         SS.assert(name && typeof name === 'string', args);
         const list = [];
+        const makeNewTable = (...args) => {
+          // NOTE: To avoid memory leak, never take the reference of disposer itself.
+          // NOTE: "returnValue" might be unnecessary, rather, might cause memory leak.
+          SS.assert(args.length === 0, args);
+          const stacktrace = [list.length, name, list, SS.saveStackTrace('SS.getDisposerManager():')];
+          const table = Object.seal({
+            isDisposed: false,
+            returnValue: undefined,
+            disposer: undefined,
+            disposerHelper(...args) {
+              SS.assert(args.length === 0, args, ...stacktrace);
+              if (table.isDisposed) {
+                // called twice
+                SS.warn('SS.getDisposerManager():', name, ':', 'disposerHelper():', 'called twice');
+              } else {
+                const disposer = table.disposer;
+                SS.assert(SS.isCallable(disposer), disposer, ...stacktrace);
+                table.disposer = null; // release disposer
+                table.returnValue = disposer(); // may be "undefined"
+                table.isDisposed = true;
+                Object.freeze(table);
+              }
+              return table.returnValue;
+            },
+          });
+          return table;
+        };
         const manager = Object.freeze({
           toString: () => name,
 
@@ -428,24 +455,18 @@
           add(...args) {
             SS.assert(args.length === 1, args);
             const [disposer] = args;
-            SS.isCallable(disposer, args);
-            const index = list.length;
-            const stacktrace = [args, SS.saveStackTrace('SS.disposerHelper():')];
-            const disposerHelper = (...args) => {
-              SS.assert(args.length === 0, args, ...stacktrace);
-              SS.assert(list[index], manager, index, ...stacktrace); // error if called twice
-              list[index] = null;
-              return disposer();
-            };
-            list.push(disposerHelper);
-            return disposerHelper;
+            SS.assert(SS.isCallable(disposer), args);
+            const table = makeNewTable();
+            table.disposer = disposer;
+            list.push(table);
+            return table.disposerHelper;
           },
 
           cleanup(...args) {
             SS.assert(args.length === 0, args);
-            const count = list.filter(SS.identity).map(f => f()).length;
-            SS.warn('SS.disposers:', `"${name}":`, 'cleanup:', count);
-            SS.assert(list.every(SS.not), list);
+            const count = list.filter(x => ! x.isDisposed).map(x => x.disposerHelper()).length;
+            SS.warn('SS.getDisposerManager():', name, ':', 'cleanup():', count);
+            SS.assert(list.every(x => x.isDisposed), list);
           },
         });
         return manager;
