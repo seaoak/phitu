@@ -1233,7 +1233,7 @@
 
   (() => {
     function xor(...args) {
-      if (args.length === 1 && typeof args === 'object') {
+      if (args.length === 1 && typeof args[0] === 'object') {
         const [arg] = args;
         return xor(...Object.values(arg));
       }
